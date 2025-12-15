@@ -1,6 +1,5 @@
 ### `README.md`
 
-````markdown
 # Cognitive Intelligence Project: 运动健康助手 (Multi-Agent System)
 
 本项目构建了一个基于大模型的多智能体运动健康助手。目前负责 **多智能体调度 (MAS)** 与 **用户记忆 (User Memory)** 的核心逻辑。
