@@ -1,0 +1,18 @@
+# Python 缓存
+__pycache__/
+*.pyc
+
+# 环境变量与配置 (如果有 .env 文件)
+.env
+.env.local
+
+# 系统文件
+.DS_Store
+
+# 数据文件
+# 注意：保留基础图谱(seed data)，但忽略用户产生的图谱
+# data/user_memory_graph.json
+data/tmp_*.json
+
+# 如果 config.py 里直接写了 key，也要忽略它！
+# 建议：把 key 放在环境变量里，不要写死在代码中。
