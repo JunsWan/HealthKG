@@ -1,180 +1,124 @@
-### 📄 项目协作文档 (README.md)
-
-请将以下内容保存为项目根目录下的 `README.md`。
-
-````markdown
 # Cognitive Intelligence Project: 运动健康助手 (Multi-Agent System)
 
-本项目是一个基于大模型的多智能体运动健康助手。
-目前 **多智能体调度 (MAS)**、**用户记忆系统** 与 **前端交互** 已搭建完毕。
-**知识图谱 (KG) 检索** 目前使用 Mock 数据，需要接入真实的 Neo4j 数据库。
+本项目构建了一个基于大模型的多智能体运动健康助手。目前负责 **多智能体调度 (MAS)** 与 **用户记忆 (User Memory)** 的核心逻辑。
+
+**注意**：知识图谱 (KG) 的检索部分目前为 Mock/空接口，需由负责 KG 的同学在 `tools/kg_retrieval.py` 中实现。
 
 ---
 
-## 📂 核心目录说明
+## 📂 项目结构说明
 
 ```text
 code/
-├── app.py                  # [入口] Streamlit 前端与 Session 管理
-├── agents/                 # [核心] 智能体编排 (Router, Planner, Reasoner)
-│   ├── subflows.py         # ★ 工作流控制：调用 KG 接口的地方
-│   └── schemas.py          # 结构化输出定义
-├── memory/                 # [记忆] 用户画像与历史记录 (Graph RAG)
-├── tools/                  # [接口] 外部工具
-│   └── kg_retrieval.py     # ★★★ KG 组开发重点：图谱检索接口实现
-└── data/                   # 本地数据 (包含目前的 Mock JSON)
+├── app.py                  # [Entry] Streamlit 前端入口，负责 Session 管理和 UI 渲染
+├── agents/                 # [Core] 智能体与编排逻辑
+│   ├── router.py           # 意图路由 (Router)
+│   ├── subflows.py         # 子工作流编排 (控制数据流向的核心)
+│   ├── runner.py           # LLM 调用与 Trace 记录封装
+│   ├── schemas.py          # Structured Outputs 定义 (JSON Schema)
+│   ├── prompts.py          # 各 Agent 的 System Prompt
+│   └── response_generator.py # 最终回复生成模块
+├── core/
+│   ├── llm.py              # OpenAI API 客户端封装
+│   └── config.py           # 配置读取
+├── memory/                 # [Memory] 用户记忆模块
+│   ├── graph_store.py      # 用户记忆图谱的操作逻辑 (增删改查)
+│   └── persistence.py      # JSON 文件读写
+├── tools/                  # [Interface] 外部工具接口
+│   └── kg_retrieval.py     # ★ KG 组员开发点：图谱检索接口
+├── data/                   # 数据存储
+│   ├── user_memory_graph.json # 用户记忆图谱 (持久化)
+│   ├── exercise_kg.json    # 运动知识图谱 (源数据)
+│   └── nutrition_kg.json   # 饮食知识图谱 (源数据)
+└── pages/                  # Streamlit 调试页面
+    ├── 1_Trace.py          # 查看 Agent 思考链 (Debug 用)
+    └── ...
 ````
 
-## 🚀 开发环境
+## 🚀 目前已实现功能
 
-1.  **依赖安装**:
-    ```bash
-    pip install streamlit openai networkx neo4j
-    ```
-2.  **启动应用**:
-    ```bash
-    streamlit run app.py
-    ```
+1.  **多智能体编排 (Orchestration)**:
+      * 实现了 `Router` -\> `Subflow` -\> `Specialized Agents` 的分层架构。
+      * 支持意图：咨询问答 (FAQ)、方案规划 (Plan)、记忆查询 (Query)、日志上报 (Log)。
+2.  **长期记忆系统 (Long-term Memory)**:
+      * 基于 Graph (JSON) 的用户画像、偏好、历史记录存储。
+      * `MemoryRetriever`: 自动提取与当前对话相关的记忆。
+      * `MemoryUpdater`: 基于对话内容自动更新用户图谱 (Patch Ops)。
+3.  **结构化输出 (Structured Outputs)**:
+      * 所有 Agent 均强制使用 JSON Schema 输出，保证系统稳定性。
+4.  **调试工具**:
+      * 前端提供 `Trace` 页面，可实时查看每个 Agent 的耗时、输入与 JSON 输出。
 
 -----
 
-## 🤝 协作接口规范 (For KG Team)
+## 🤝 协作接口说明 (For KG Team)
 
-KG 组的主要任务是修改 `tools/kg_retrieval.py`，将目前的关键词匹配替换为 **Neo4j Cypher 查询** 或 **向量检索**。
-
-系统会在 `subflows.py` 中自动调用以下两个函数。**请务必保持函数签名 (Input/Output) 不变。**
+KG 组员的主要工作集中在 **`tools/kg_retrieval.py`**。
+目前系统会在 `subflows.py` 中调用以下两个函数。请保持函数签名一致，修改内部实现以对接 Neo4j 或向量库。
 
 ### 1\. 运动图谱检索 (`retrieve_exercise_kg`)
 
-  * **功能**: 根据用户的模糊需求或 Agent 提取的关键词，从运动图谱中找出最匹配的动作。
-  * **输入 (`args: Dict`)**:
-      * `query` (str): 搜索关键词（如 "练胸"、"膝盖痛 康复"）。
-      * `topk` (int): 需要返回的数量（默认为 8）。
-      * *(扩展)*: 未来如果 Agent 传入了 `muscle` 或 `difficulty`，也可在此解析。
-  * **输出 (`List[Dict]`)**: 返回一个字典列表，每个字典代表一个节点/知识点。
+  * **调用时机**: 当用户咨询动作，或 Agent 需要规划训练计划时。
+  * **输入 (`args`)**:
+      * `query` (str): 用户的原始问题，或 Agent 生成的搜索关键词。
+      * `topk` (int): 需要返回的数量。
+      * *(可选)* `muscle`, `difficulty` 等过滤参数（视 Agent 生成的 args 而定）。
+  * **输出**: `List[Dict]`，每个 Dict 代表一条证据/知识点。
 
-**必须包含的字段**:
+<!-- end list -->
 
 ```python
-[
-    {
-        "evidence_id": "unique_id_from_neo4j",  # 节点的唯一标识
-        "name": "杠铃卧推",                       # 动作名称
-        "summary": "针对胸大肌中部的基础复合动作...", # 简短描述/简介
-        "fields": {                             # 其他属性放在这里
-            "target_muscle": "Chest",
-            "difficulty": "Medium",
-            "equipment": "Barbell"
+# tools/kg_retrieval.py
+
+def retrieve_exercise_kg(args: dict, kg_graph: dict) -> list:
+    """
+    TODO: Replace with actual Neo4j/Vector DB query.
+    Current: Returns mock data or simple keyword match from json.
+    """
+    query = args.get("query", "")
+    # ... 实现你的检索逻辑 ...
+    return [
+        {
+            "evidence_id": "ex_001",
+            "name": "杠铃卧推",
+            "summary": "锻炼胸大肌的黄金动作...",
+            "fields": {"target": "Chest", "equipment": "Barbell"},
+            "source": "ExerciseKG"
         },
-        "source": "Neo4j_Exercise"              # 数据来源标识
-    },
-    # ...
-]
+        # ...
+    ]
 ```
 
 ### 2\. 饮食图谱检索 (`retrieve_nutrition_kg`)
 
-  * **功能**: 查询食物热量、营养素或饮食建议。
-  * **输入**: 同上。
-  * **输出**: 结构同上，但 `fields` 中应包含 `calories`, `protein`, `carb` 等信息。
+  * **调用时机**: 当用户咨询食物热量、营养搭配，或生成饮食计划时。
+  * **输入/输出**: 结构同上。
 
 -----
 
-## 🛠️ Neo4j 接入指南 (建议方案)
+## 🛠️ 快速启动
 
-建议在 `tools/` 下新建 `neo4j_client.py` 单例模式管理连接，然后在 `kg_retrieval.py` 中调用。
+1.  **配置环境**:
+    ```bash
+    pip install streamlit openai networkx
+    ```
+2.  **运行系统**:
+    ```bash
+    streamlit run app.py
+    ```
+3.  **配置 LLM**:
+      * 启动后在侧边栏/Settings页填写 API Key 和 Base URL。
+4.  **调试**:
+      * 在主页对话。
+      * 点击左侧 `Trace` 页面查看 Agent 内部交互细节。
 
-**简单的模糊查询 Cypher 示例**:
+-----
 
-```cypher
-// 查找名称包含关键词的动作，或者描述包含关键词的动作
-MATCH (n:Exercise)
-WHERE n.name CONTAINS $keyword OR n.description CONTAINS $keyword
-RETURN n
-LIMIT $topk
+## ⚠️ 注意事项
+
+  * **Schema 变更**: 如果修改了 Agent 的输出字段，请务必同步修改 `agents/schemas.py`。
+  * **状态管理**: `st.session_state.user_memory_graph` 是内存中的热数据，对话结束会自动保存到 `data/` 目录。手动修改 JSON 文件需重启服务。
+
+<!-- end list -->
+
 ```
-
-````
-
----
-
-### 💡 给你的 Neo4j 实施建议 (Cheat Sheet)
-
-既然你对 Neo4j 不太熟，这里有一份标准代码（"抄作业"模板）。你可以把这段代码发给负责图谱的队友，或者你自己写进 `tools/kg_retrieval.py` 里。
-
-你需要用到 Python 的官方库：`pip install neo4j`
-
-#### 1. 修改 `tools/kg_retrieval.py` 引入 Neo4j 连接
-
-```python
-# tools/kg_retrieval.py (修改版建议)
-import os
-from neo4j import GraphDatabase
-from typing import List, Dict, Any
-
-# --- 配置部分 (建议移到 config.py 或环境变量) ---
-NEO4J_URI = "bolt://localhost:7687"
-NEO4J_USER = "neo4j"
-NEO4J_PASSWORD = "your_password"
-
-# 建立驱动 (最好做成单例，这里为了演示直接写)
-driver = GraphDatabase.driver(NEO4J_URI, auth=(NEO4J_USER, NEO4J_PASSWORD))
-
-def _run_cypher(query: str, params: dict = None):
-    """执行 Cypher 语句的通用函数"""
-    with driver.session() as session:
-        result = session.run(query, params or {})
-        return [record.data() for record in result]
-
-def retrieve_exercise_kg(args: Dict[str, Any], exercise_kg: Dict[str, Any]=None) -> List[Dict[str, Any]]:
-    """
-    实际连接 Neo4j 的版本
-    注意：exercise_kg 参数可能不再需要，或者作为 fallback
-    """
-    user_query = args.get("query", "")
-    topk = args.get("topk", 5)
-
-    if not user_query:
-        return []
-
-    # 编写 Cypher: 这里用简单的 CONTAINS 做模糊匹配
-    # 也可以用全文索引 (Fulltext Index) 效果更好
-    cypher_sql = """
-    MATCH (n:Exercise) 
-    WHERE toLower(n.name) CONTAINS toLower($q) 
-       OR toLower(n.description) CONTAINS toLower($q)
-       OR toLower(n.target_muscle) CONTAINS toLower($q)
-    RETURN n.id AS id, n.name AS name, n.description AS summary, n 
-    LIMIT $k
-    """
-    
-    try:
-        raw_results = _run_cypher(cypher_sql, {"q": user_query, "k": topk})
-        
-        # 格式化为 Agent 需要的标准格式
-        evidence_list = []
-        for row in raw_results:
-            node_props = row.get("n", {})
-            evidence_list.append({
-                "evidence_id": str(row.get("id", node_props.get("id", "unknown"))),
-                "name": row.get("name", "Unknown Exercise"),
-                "summary": row.get("summary", "")[:100] + "...", # 截断一下防止Token爆炸
-                "fields": {
-                    "muscle": node_props.get("target_muscle"),
-                    "equipment": node_props.get("equipment"),
-                    "difficulty": node_props.get("difficulty")
-                },
-                "source": "Neo4j_Prod"
-            })
-        return evidence_list
-
-    except Exception as e:
-        print(f"[KG Error] Neo4j query failed: {e}")
-        # 如果数据库挂了，回退到原来的 keyword search (mock)
-        from core.json_utils import dumps # 复用你原来的逻辑
-        if exercise_kg:
-            return _original_simple_keyword_retrieve(exercise_kg, user_query, topk)
-        return []
-
-# Nutrition 同理...
-````
