@@ -180,17 +180,18 @@ def retrieve_exercise_kg(args: Dict[str, Any], exercise_kg: Dict[str, Any]=None)
 ````
 
 
-### 健身知识图谱
+## 健身知识图谱
 文件 exercise_recommender.py
 
 ## 输入字段
-'''{
+'''
+{
         "target_body_part": str,                #目标部位
         "injury_body_part": str,                #受伤的部位
         "available_equipment": List[str],       #可用器械
         "history": List[dict],                  #历史信息（历史信息的arg见下）
         "topk": int (optional)                  #topk
-    }
+}
 
     history args:
     {
@@ -206,6 +207,7 @@ def retrieve_exercise_kg(args: Dict[str, Any], exercise_kg: Dict[str, Any]=None)
 
 ## 输出
 包含字段
+'''
         {
             "id": r.get("id"),                              #该动作为一标识id
             "name": r.get("name"),                          #名称
@@ -218,6 +220,6 @@ def retrieve_exercise_kg(args: Dict[str, Any], exercise_kg: Dict[str, Any]=None)
             },
             "source": "Exercise_Recommender"
         }
-
+'''
 用户选择后需要讲 "id","target_muscles","body_part" ,"timestamp"（锻炼时间eg：2025-12-07T23:02:53）  存为history字段里
 
