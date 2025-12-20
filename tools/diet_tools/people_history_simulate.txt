@@ -1,0 +1,182 @@
+[    
+    {
+    "user_id": "user_001",
+    "demographics": {
+        "gender": "male",
+        "age": 29,
+        "height_cm": 175,
+        "weight_kg": 82,
+        "nationality": "chinese"
+    },
+    "activity": {
+        "activity_level": "sedentary",
+        "user_goal": "cutting"
+    },
+    "diet_profile": {
+        "diet_labels": ["Low-Fat", "Low-Carb"],
+        "health_preferences": ["Gluten-Free", "Dairy-Free"],
+        "forbidden_cautions": ["Shellfish"],
+        "preferred_ingredients": ["chicken", "broccoli", "tofu"],
+        "disliked_ingredients": ["cilantro"]
+    },
+    "current_context": {
+        "meal_time": "dinner",
+        "today_intake": [
+        {
+            "meal_time": "breakfast",
+            "calories": 380,
+            "timestamp": "2025-12-20T08:10:00"
+        },
+        {
+            "meal_time": "lunch",
+            "calories": 720,
+            "timestamp": "2025-12-20T12:30:00"
+        }
+        ]
+    },
+    "history": [
+        {
+        "recipe_id": "r_chicken_stirfry",
+        "timestamp": "2025-12-18T19:00:00"
+        }
+    ]
+    },
+    {
+    "user_id": "user_002",
+    "demographics": {
+        "gender": "male",
+        "age": 24,
+        "height_cm": 180,
+        "weight_kg": 75,
+        "nationality": "chinese"
+    },
+    "activity": {
+        "activity_level": "high",
+        "user_goal": "bulking"
+    },
+    "diet_profile": {
+        "diet_labels": ["High-Protein"],
+        "health_preferences": ["Low-Sodium"],
+        "forbidden_cautions": [],
+        "preferred_ingredients": ["beef", "egg", "rice"],
+        "disliked_ingredients": []
+    },
+    "current_context": {
+        "meal_time": "lunch",
+        "today_intake": [
+        {
+            "meal_time": "breakfast",
+            "calories": 550,
+            "timestamp": "2025-12-20T07:45:00"
+        }
+        ]
+    },
+    "history": [
+        {
+        "recipe_id": "r_beef_rice_bowl",
+        "timestamp": "2025-12-19T12:40:00"
+        }
+    ]
+    },
+    {
+    "user_id": "user_003",
+    "demographics": {
+        "gender": "female",
+        "age": 34,
+        "height_cm": 162,
+        "weight_kg": 54,
+        "nationality": "chinese"
+    },
+    "activity": {
+        "activity_level": "light",
+        "user_goal": "maintenance"
+    },
+    "diet_profile": {
+        "diet_labels": ["Balanced"],
+        "health_preferences": ["Vegetarian", "Egg-Free"],
+        "forbidden_cautions": ["Eggs"],
+        "preferred_ingredients": ["oat", "soy milk", "banana"],
+        "disliked_ingredients": ["meat"]
+    },
+    "current_context": {
+        "meal_time": "breakfast",
+        "today_intake": []
+    },
+    "history": []
+    },
+    {
+    "user_id": "user_004",
+    "demographics": {
+        "gender": "female",
+        "age": 31,
+        "height_cm": 165,
+        "weight_kg": 60,
+        "nationality": "chinese"
+    },
+    "activity": {
+        "activity_level": "moderate",
+        "user_goal": "maintenance"
+    },
+    "diet_profile": {
+        "diet_labels": ["High-Fiber", "Balanced"],
+        "health_preferences": ["Low-Sodium", "Dairy-Free"],
+        "forbidden_cautions": ["Milk"],
+        "preferred_ingredients": ["fish", "spinach", "brown rice"],
+        "disliked_ingredients": []
+    },
+    "current_context": {
+        "meal_time": "lunch",
+        "today_intake": [
+        {
+            "meal_time": "breakfast",
+            "calories": 450,
+            "timestamp": "2025-12-20T08:20:00"
+        }
+        ]
+    },
+    "history": [
+        {
+        "recipe_id": "r_steamed_fish",
+        "timestamp": "2025-12-17T12:00:00"
+        }
+    ]
+    },
+    {
+    "user_id": "user_005",
+    "demographics": {
+        "gender": "male",
+        "age": 38,
+        "height_cm": 172,
+        "weight_kg": 70,
+        "nationality": "chinese"
+    },
+    "activity": {
+        "activity_level": "light",
+        "user_goal": "maintenance"
+    },
+    "diet_profile": {
+        "diet_labels": [],
+        "health_preferences": ["Low-Sugar"],
+        "forbidden_cautions": [],
+        "preferred_ingredients": ["noodle", "vegetable"],
+        "disliked_ingredients": []
+    },
+    "current_context": {
+        "meal_time": "dinner",
+        "today_intake": [
+        {
+            "meal_time": "breakfast",
+            "status": "skipped",
+            "calories": 0,
+            "timestamp": "2025-12-20T08:00:00"
+        },
+        {
+            "meal_time": "lunch",
+            "calories": 650,
+            "timestamp": "2025-12-20T12:15:00"
+        }
+        ]
+    },
+    "history": []
+    }
+]
