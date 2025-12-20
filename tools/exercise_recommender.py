@@ -43,7 +43,7 @@ def recommend_exercise_tool(
     Expected args (from Agent / subflow):
     {
         "target_body_part": str,
-        "injury_body_part": str,
+        "injury_body_part": List[str],
         "available_equipment": List[str],
         "history": List[dict],
         "topk": int (optional)
@@ -64,7 +64,7 @@ def recommend_exercise_tool(
         return []
 
     target_body_part = args.get("target_body_part")
-    injury_body_part = args.get("injury_body_part")
+    injury_body_part = args.get("injury_body_part",[])
     available_equipment = args.get("available_equipment", [])
     history = args.get("history", [])
     topk = int(args.get("topk", 5))
