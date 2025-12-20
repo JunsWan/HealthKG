@@ -12,16 +12,17 @@ class ExerciseKGQuery:
     def fetch_candidates(
         self,
         target_body_part,
-        injury_body_part,
+        injury_body_part,      # 🔁 改成复数，list
         available_equipment,
     ):
         query = """
             MATCH (ev:ExerciseVariant)
             MATCH (ev)-[:TRAINS_BODY_PART]->(:TrainingBodyPart {name: $target_body_part})
 
-            /* 排除 instruction 中涉及受伤部位 */
+            /* 排除 instruction 中涉及任一受伤部位 */
             WHERE NOT EXISTS {
-            MATCH (ev)-[:INVOLVES_BODY_PART]->(:InstructionBodyPart {name: $injury_body_part})
+                MATCH (ev)-[:INVOLVES_BODY_PART]->(ibp:InstructionBodyPart)
+                WHERE ibp.name IN $injury_body_part
             }
 
             /* equipment */
@@ -33,29 +34,30 @@ class ExerciseKGQuery:
             OPTIONAL MATCH (ev)-[:STABILIZES]->(stm:Muscle)
 
             RETURN
-            ev.id           AS id,
-            ev.name         AS name,
-            ev.instructions AS instructions,
-            ev.utility      AS utility,
-            ev.force        AS force,
+                ev.id           AS id,
+                ev.name         AS name,
+                ev.instructions AS instructions,
+                ev.utility      AS utility,
+                ev.force        AS force,
 
-            /* equipment list */
-            collect(DISTINCT eq.name) AS equipment,
+                /* equipment list */
+                collect(DISTINCT eq.name) AS equipment,
 
-            /* muscle groups */
-            collect(DISTINCT tm.name)  AS target_muscles,
-            collect(DISTINCT sm.name)  AS synergist_muscles,
-            collect(DISTINCT stm.name) AS stabilizer_muscles
+                /* muscle groups */
+                collect(DISTINCT tm.name)  AS target_muscles,
+                collect(DISTINCT sm.name)  AS synergist_muscles,
+                collect(DISTINCT stm.name) AS stabilizer_muscles
         """
 
         with self.driver.session() as session:
             result = session.run(
                 query,
                 target_body_part=target_body_part,
-                injury_body_part=injury_body_part,
+                injury_body_part=injury_body_part,  # 🔁 注意参数名
                 available_equipment=available_equipment,
             )
             return [record.data() for record in result]
+
 
     def fetch_all_training_body_parts(self):
         query = """
