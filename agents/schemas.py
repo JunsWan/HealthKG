@@ -311,7 +311,18 @@ KNOWLEDGE_RETRIEVER_RESPONSE_FORMAT = {
             "type": "object",
             "properties": {
               "tool": {"type": "string", "enum": ["retrieve_exercise_kg", "retrieve_nutrition_kg"]},
-              "args": {"type": "object"} # Dynamic
+              "args": {
+                "type": "object",
+                "properties": {
+                  # 针对 exercise 必须产生这三个参数
+                  "target_body_part": {"type": "string", "description": "Target muscle or body part (e.g., Chest, Back, Legs)"},
+                  "injury_body_part": {"type": "string", "description": "Body part to avoid due to injury"},
+                  "available_equipment": {"type": "array", "items": {"type": "string"}},
+                  # 兼容 nutrition 依然用 query
+                  "query": {"type": "string"} 
+                },
+                # 这里不要 strict required，因为不同工具需要的参数不一样，靠 Agent 自己判断
+              }
             },
             "required": ["tool", "args"]
           }

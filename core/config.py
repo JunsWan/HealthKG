@@ -18,7 +18,10 @@ def get_cfg() -> dict:
         st.session_state.cfg = {
             "api_key": api_key,
             "base_url": base_url,
-            "model": model
+            "model": model,
+            "neo4j_uri": os.environ.get("NEO4J_URI", "neo4j+s://7222f7ba.databases.neo4j.io"),
+            "neo4j_user": os.environ.get("NEO4J_USER", "neo4j"),
+            "neo4j_password": os.environ.get("NEO4J_PASSWORD", "flF6YWcBHUAR3GFOvDHyo4-ZbpU-NrLhqccto15uoBU"),
         }
 
     return st.session_state.cfg

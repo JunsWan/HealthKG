@@ -1,15 +1,18 @@
 # app.py
 import os
+import time
 import streamlit as st
 from core.config import get_cfg
-from datetime import datetime, timezone
+from datetime import datetime
 from memory.persistence import load_graph, save_graph
 from memory.graph_store import new_graph, summarize
 from agents.router import route
 from agents.subflows import (
     ensure_pipeline_state,
     subflow_faq_exercise, subflow_faq_food, subflow_query_memory,
-    subflow_plan_full, subflow_log_update
+    subflow_log_update,
+    # 引入修改后的两个函数
+    subflow_plan_full, subflow_commit_plan
 )
 from agents.response_generator import render_response
 
@@ -21,9 +24,9 @@ PATH_USER = os.path.join(DATA_DIR, "user_memory_graph.json")
 PATH_EX = os.path.join(DATA_DIR, "exercise_kg.json")
 PATH_NU = os.path.join(DATA_DIR, "nutrition_kg.json")
 
-# Session init
+# === Session Init ===
 if "messages" not in st.session_state:
-    st.session_state.messages = []  # [{"role":"user/assistant","content":"..."}]
+    st.session_state.messages = []
 if "trace" not in st.session_state:
     st.session_state.trace = []
 if "user_memory_graph" not in st.session_state:
@@ -33,7 +36,11 @@ if "exercise_kg" not in st.session_state:
 if "nutrition_kg" not in st.session_state:
     st.session_state.nutrition_kg = load_graph(PATH_NU, new_graph())
 
-st.title("多智能体健身/饮食助手（Chat）")
+# ★★★ 新增：暂存待确认的计划 ★★★
+if "pending_plan" not in st.session_state:
+    st.session_state.pending_plan = None 
+
+st.title("多智能体健身饮食助手")
 
 def _fmt_ts(ts: int) -> str:
     if not ts:
@@ -117,12 +124,18 @@ for m in st.session_state.messages:
     with st.chat_message(m["role"]):
         st.markdown(m["content"])
 
-user_text = st.chat_input("输入你的问题/需求（可咨询、查记录、生成方案、上报日志）")
+# === Input Handling ===
+user_text = st.chat_input("输入你的问题/需求...")
+
 if user_text:
     if not cfg["api_key"]:
-        st.error("先去 Settings 页填写 API Key（不要写进代码）")
+        st.error("请先配置 API Key")
         st.stop()
 
+    # ★★★ 关键逻辑：用户只要一说话，就视为“未采纳/想修改”，清空旧的待确认计划
+    if st.session_state.pending_plan:
+        st.session_state.pending_plan = None
+    
     st.session_state.messages.append({"role": "user", "content": user_text})
     with st.chat_message("user"):
         st.markdown(user_text)
@@ -130,51 +143,114 @@ if user_text:
     trace = st.session_state.trace
     user_graph = st.session_state.user_memory_graph
 
-    with st.spinner("Router 调度中..."):
+    with st.spinner("Router 思考中..."):
         r = route(user_text, st.session_state.messages, user_graph, trace)
 
     if r.get("need_clarify"):
-        # 先澄清，不跑 pipeline，不更新记忆
         qs = r.get("clarify_questions", [])
-        reply = "我还需要确认几件事：\n" + "\n".join([f"- {q}" for q in qs]) if qs else "我需要你补充一点信息。"
+        reply = "我还需要确认几件事：\n" + "\n".join([f"- {q}" for q in qs])
         st.session_state.messages.append({"role": "assistant", "content": reply})
         with st.chat_message("assistant"):
             st.markdown(reply)
         st.stop()
 
     route_name = r.get("route", "other")
-
-    # Run minimal subflow
     state = ensure_pipeline_state(user_text, user_graph)
+
+    # === Subflows Execution ===
     if route_name == "faq_exercise":
         state = subflow_faq_exercise(state, st.session_state.exercise_kg)
+    
     elif route_name == "faq_food":
         state = subflow_faq_food(state, st.session_state.nutrition_kg)
+    
     elif route_name == "query_memory":
         state = subflow_query_memory(state, trace)
+    
     elif route_name in ("plan_workout", "plan_diet", "plan_both"):
-        state = subflow_plan_full(state, trace, st.session_state.exercise_kg, st.session_state.nutrition_kg)
-        if "user_memory_graph_updated" in state:
-            updated = state["user_memory_graph_updated"]
-            st.session_state.user_memory_graph = updated
-            try:
-                save_graph(PATH_USER, updated)
-            except Exception as e:
-                st.warning(f"用户记忆图谱保存失败：{e}")
+        # 1. 运行计划生成 (不保存)
+        state = subflow_plan_full(
+            state, trace, 
+            st.session_state.exercise_kg, 
+            st.session_state.nutrition_kg, 
+            route_name=route_name
+        )
+        # 2. 生成回复文本
+        with st.spinner("生成方案中..."):
+            reply = render_response(route_name, state, state.get("memory_summary", {}))
+        
+        # 3. ★★★ 修复：增加判断条件 ★★★
+        # 只有当 decision 有回复，并且 draft_plan 也有内容时，才视为有效计划
+        # (因为如果是器械拦截，draft_plan 会被置空，这里就不会进入 pending 状态)
+        has_response = state.get("decision", {}).get("response")
+        has_draft = state.get("draft_plan")  # 关键检查点
+        
+        if has_response and has_draft:
+            st.session_state.pending_plan = {
+                "state": state,
+                "trace": list(trace),
+                "text": reply
+            }
+            # 强制刷新页面
+            st.rerun()
+
     elif route_name == "log_update":
         state = subflow_log_update(state, trace)
         if "user_memory_graph_updated" in state:
             updated = state["user_memory_graph_updated"]
             st.session_state.user_memory_graph = updated
-            try:
-                save_graph(PATH_USER, updated)
-            except Exception as e:
-                st.warning(f"用户记忆图谱保存失败：{e}")
+            save_graph(PATH_USER, updated)
 
-    # Render user-friendly reply
-    with st.spinner("生成用户回复..."):
-        reply = render_response(route_name, state, state.get("memory_summary", {}))
+    # === Render Reply (Non-Plan routes) ===
+    # 只有非 plan 路由，或者 plan 生成失败时，才在这里直接显示
+    # 如果是 plan 路由且成功，上面已经 rerun 了
+    if route_name not in ("plan_workout", "plan_diet", "plan_both"):
+        with st.spinner("生成回复..."):
+            reply = render_response(route_name, state, state.get("memory_summary", {}))
+        st.session_state.messages.append({"role": "assistant", "content": reply})
+        with st.chat_message("assistant"):
+            st.markdown(reply)
 
-    st.session_state.messages.append({"role": "assistant", "content": reply})
-    with st.chat_message("assistant"):
-        st.markdown(reply)
+# ============================================================
+# ★★★ 待确认计划区域 (Always Render Check) ★★★
+# ============================================================
+
+# 如果有暂存的计划，先显示助手回复，再显示按钮
+if st.session_state.pending_plan:
+    plan_data = st.session_state.pending_plan
+    
+    # 1. 把刚才生成的计划补显示在聊天流里 (如果还没显示的话)
+    # 检查最后一条消息是不是这个计划，如果不是，就append进去
+    last_msg = st.session_state.messages[-1] if st.session_state.messages else {}
+    if last_msg.get("content") != plan_data["text"]:
+        st.session_state.messages.append({"role": "assistant", "content": plan_data["text"]})
+        with st.chat_message("assistant"):
+            st.markdown(plan_data["text"])
+    
+    # 2. 渲染操作按钮
+    with st.container():
+        st.info("💡 这是一个新生成的计划。请确认是否采纳：")
+        col1, col2 = st.columns([1, 5])
+        with col1:
+            if st.button("✅ 采纳此计划", type="primary", key="btn_accept"):
+                # A. 调用 Commit Subflow
+                with st.spinner("正在将计划写入长期记忆..."):
+                    final_state = subflow_commit_plan(
+                        plan_data["state"], 
+                        plan_data["trace"], 
+                        plan_data["text"]
+                    )
+                
+                # B. 更新全局 Session
+                if "user_memory_graph_updated" in final_state:
+                    st.session_state.user_memory_graph = final_state["user_memory_graph_updated"]
+                    save_graph(PATH_USER, final_state["user_memory_graph_updated"])
+                
+                # C. 清理状态
+                st.session_state.pending_plan = None
+                st.success("已保存！我会监督你执行的。")
+                time.sleep(1)
+                st.rerun()
+        
+        with col2:
+            st.caption("如果不满意，请直接在下方输入框告诉我怎么修改（例如：'太难了，换简单的'），我会重新生成。")

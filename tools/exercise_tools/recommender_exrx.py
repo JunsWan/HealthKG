@@ -2,8 +2,9 @@
 
 from datetime import datetime, timedelta
 from collections import Counter, defaultdict
-from query import ExerciseKGQuery
 import random
+from tools.exercise_tools.query import ExerciseKGQuery
+
 
 # =========================
 # Real physical equipment

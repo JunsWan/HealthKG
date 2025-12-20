@@ -3,16 +3,18 @@
 from typing import Dict, Any, List, Optional
 from threading import Lock
 
-from exercise_tools.query import ExerciseKGQuery
-from exercise_tools.recommender_exrx import recommend_exercises
+from core.config import get_cfg
+from tools.exercise_tools.query import ExerciseKGQuery
+from tools.exercise_tools.recommender_exrx import recommend_exercises
 
 
 # ============================================================
 # Neo4j Client (Exercise)
 # ============================================================
 
-_NEO4J_URI = "neo4j+s://7222f7ba.databases.neo4j.io"
-_NEO4J_AUTH = ("neo4j", "flF6YWcBHUAR3GFOvDHyo4-ZbpU-NrLhqccto15uoBU")
+cfg = get_cfg()
+_NEO4J_URI = cfg["neo4j_uri"]
+_NEO4J_AUTH = (cfg["neo4j_user"], cfg["neo4j_password"])
 
 _kg_client: Optional[ExerciseKGQuery] = None
 _kg_lock = Lock()
@@ -37,7 +39,7 @@ def _get_kg_client() -> ExerciseKGQuery:
 def recommend_exercise_tool(
     args: Dict[str, Any]
 ) -> List[Dict[str, Any]]:
-    f"""
+    """
     MAS Tool: Exercise Recommendation
 
     Expected args (from Agent / subflow):
@@ -110,7 +112,7 @@ def recommend_exercise_tool(
                 "target_body_part": target_body_part,
                 "utility": r.get("utility"),
                 "force": r.get("force"),
-                "target muscles": r.get["target_muscles"]
+                "target muscles": r.get("target_muscles")
             },
             "source": "Exercise_Recommender"
         }

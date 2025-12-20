@@ -16,3 +16,4 @@ data/tmp_*.json
 
 # 如果 config.py 里直接写了 key，也要忽略它！
 # 建议：把 key 放在环境变量里，不要写死在代码中。
+start.sh

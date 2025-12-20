@@ -78,6 +78,55 @@ class ExerciseKGQuery:
         with self.driver.session() as session:
             return [r["name"] for r in session.run(query)]
 
+    def search_exercises(self, keyword: str, excludes: list = None, limit: int = 5):
+        """
+        [升级版搜索] 支持关键词模糊匹配 + 排除词过滤
+        """
+        # 1. 处理默认参数
+        if excludes is None:
+            excludes = []
+            
+        # 2. 动态构建排除语句 (Cypher Logic)
+        # 如果 excludes = ["Squat", "Jump"]
+        # 生成: AND NOT (toLower(ev.name) CONTAINS "squat") AND NOT (toLower(ev.name) CONTAINS "jump")
+        exclude_clause = ""
+        if excludes:
+            conditions = []
+            for ex in excludes:
+                # 注意转义和转小写
+                safe_ex = ex.replace("'", "").replace('"', '').lower()
+                conditions.append(f"NOT toLower(ev.name) CONTAINS '{safe_ex}'")
+            
+            # 拼接到 SQL 中
+            exclude_clause = "AND (" + " AND ".join(conditions) + ")"
+
+        # 3. 编写完整 Cypher
+        query = f"""
+        MATCH (ev:ExerciseVariant)
+        WHERE (
+            /* 匹配名字 */
+            toLower(ev.name) CONTAINS toLower($kw)
+            OR EXISTS {{
+                /* 匹配部位 (注意新版语法可能是 :TRAINS_BODY_PART|TARGETS) */
+                MATCH (ev)-[:TRAINS_BODY_PART|TARGETS]->(n)
+                WHERE toLower(n.name) CONTAINS toLower($kw)
+            }}
+        )
+        {exclude_clause}  /* <--- 插入排除逻辑 */
+        
+        RETURN DISTINCT
+          ev.id           AS id,
+          ev.name         AS name,
+          ev.instructions AS instructions,
+          ev.utility      AS utility,
+          ev.mechanics    AS mechanics
+        LIMIT $limit
+        """
+        
+        with self.driver.session() as session:
+            result = session.run(query, kw=keyword, limit=limit)
+            return [record.data() for record in result]
+
 
 class ExerciseKGExampleQuery:
 
