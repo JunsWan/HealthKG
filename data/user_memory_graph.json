@@ -1,5 +1,627 @@
 {
-  "nodes": [],
+  "nodes": [
+    {
+      "id": "constraint:time",
+      "type": "Unknown",
+      "props": {
+        "duration_min": 60,
+        "days_per_week": 3
+      },
+      "last_updated": 1766240263
+    },
+    {
+      "id": "constraint:equipment",
+      "type": "Unknown",
+      "props": {
+        "equipment": [
+          "徒手"
+        ]
+      },
+      "last_updated": 1766238688
+    },
+    {
+      "id": "goal:primary",
+      "type": "Unknown",
+      "props": {
+        "goal": "减脂"
+      },
+      "last_updated": 1766240263
+    },
+    {
+      "id": "pref:diet",
+      "type": "Unknown",
+      "props": {
+        "diet_pref": [
+          "不吃香菜"
+        ],
+        "meal_schedule": "每天午餐晚餐"
+      },
+      "last_updated": 1766240263
+    }
+  ],
   "edges": [],
-  "events": []
+  "events": [
+    {
+      "type": "Plan",
+      "props": {
+        "plan_type": "训练规划",
+        "workout_plan": {
+          "schedule": "每周3天，隔天训练（如周一/三/五或周二/四/六）",
+          "sessions": [
+            {
+              "name": "全身徒手训练A",
+              "duration_min": 60,
+              "items": [
+                [
+                  {
+                    "exercise": "开合跳",
+                    "intensity": "中等",
+                    "sets": 2,
+                    "reps": "30秒",
+                    "rest_sec": 30,
+                    "notes": [
+                      "热身，激活全身"
+                    ]
+                  },
+                  {
+                    "exercise": "高抬腿跑",
+                    "intensity": "中等",
+                    "sets": 2,
+                    "reps": "30秒",
+                    "rest_sec": 30,
+                    "notes": [
+                      "热身，提升心率"
+                    ]
+                  }
+                ],
+                [
+                  {
+                    "exercise": "深蹲",
+                    "intensity": "中等",
+                    "sets": 4,
+                    "reps": "15-20",
+                    "rest_sec": 60,
+                    "notes": [
+                      "注意膝盖方向与脚尖一致"
+                    ]
+                  },
+                  {
+                    "exercise": "箭步蹲",
+                    "intensity": "中等",
+                    "sets": 4,
+                    "reps": "每侧12-15",
+                    "rest_sec": 60,
+                    "notes": [
+                      "保持上身直立"
+                    ]
+                  },
+                  {
+                    "exercise": "单腿臀桥",
+                    "intensity": "中等",
+                    "sets": 3,
+                    "reps": "每侧12-15",
+                    "rest_sec": 60,
+                    "notes": [
+                      "臀部发力，核心收紧"
+                    ]
+                  },
+                  {
+                    "exercise": "侧卧抬腿",
+                    "intensity": "中等",
+                    "sets": 3,
+                    "reps": "每侧15-20",
+                    "rest_sec": 45,
+                    "notes": [
+                      "锻炼臀中肌，动作缓慢"
+                    ]
+                  }
+                ],
+                [
+                  {
+                    "exercise": "平板支撑",
+                    "intensity": "中等",
+                    "sets": 3,
+                    "reps": "30-45秒",
+                    "rest_sec": 45,
+                    "notes": [
+                      "核心收紧，臀部不过高"
+                    ]
+                  }
+                ],
+                [
+                  {
+                    "exercise": "拉伸（股四头肌、腘绳肌、臀大肌、小腿）",
+                    "intensity": "低",
+                    "sets": 1,
+                    "reps": "每组30秒",
+                    "rest_sec": 0,
+                    "notes": [
+                      "每个动作保持30秒，促进恢复"
+                    ]
+                  }
+                ]
+              ],
+              "notes": [
+                "每组间休息60秒，热身组休息30秒。",
+                "如有余力可适当增加组数或重复循环主训练部分。"
+              ]
+            },
+            {
+              "name": "全身徒手训练B",
+              "duration_min": 60,
+              "items": [
+                [
+                  {
+                    "exercise": "登山跑",
+                    "intensity": "中等",
+                    "sets": 2,
+                    "reps": "30秒",
+                    "rest_sec": 30,
+                    "notes": [
+                      "热身，激活核心"
+                    ]
+                  },
+                  {
+                    "exercise": "手臂绕环",
+                    "intensity": "低",
+                    "sets": 2,
+                    "reps": "30秒",
+                    "rest_sec": 30,
+                    "notes": [
+                      "肩部热身"
+                    ]
+                  }
+                ],
+                [
+                  {
+                    "exercise": "深蹲跳",
+                    "intensity": "中高",
+                    "sets": 4,
+                    "reps": "12-15",
+                    "rest_sec": 60,
+                    "notes": [
+                      "爆发力训练，注意落地缓冲"
+                    ]
+                  },
+                  {
+                    "exercise": "反向箭步蹲",
+                    "intensity": "中等",
+                    "sets": 4,
+                    "reps": "每侧12-15",
+                    "rest_sec": 60,
+                    "notes": [
+                      "膝盖稳定，步幅适中"
+                    ]
+                  },
+                  {
+                    "exercise": "靠墙静蹲",
+                    "intensity": "中等",
+                    "sets": 3,
+                    "reps": "45-60秒",
+                    "rest_sec": 60,
+                    "notes": [
+                      "大腿与地面平行，背部贴墙"
+                    ]
+                  },
+                  {
+                    "exercise": "俯身登山者",
+                    "intensity": "中等",
+                    "sets": 3,
+                    "reps": "20-30",
+                    "rest_sec": 45,
+                    "notes": [
+                      "核心收紧，动作快慢可调"
+                    ]
+                  }
+                ],
+                [
+                  {
+                    "exercise": "拉伸（股四头肌、腘绳肌、臀大肌、小腿）",
+                    "intensity": "低",
+                    "sets": 1,
+                    "reps": "每组30秒",
+                    "rest_sec": 0,
+                    "notes": [
+                      "每个动作保持30秒，促进恢复"
+                    ]
+                  }
+                ]
+              ],
+              "notes": [
+                "每组间休息60秒，热身组休息30秒。",
+                "如有余力可适当增加组数或重复循环主训练部分。"
+              ]
+            },
+            {
+              "name": "全身徒手训练C",
+              "duration_min": 60,
+              "items": [
+                [
+                  {
+                    "exercise": "原地小步跑",
+                    "intensity": "中等",
+                    "sets": 2,
+                    "reps": "30秒",
+                    "rest_sec": 30,
+                    "notes": [
+                      "热身，提升心率"
+                    ]
+                  },
+                  {
+                    "exercise": "肩部环绕",
+                    "intensity": "低",
+                    "sets": 2,
+                    "reps": "30秒",
+                    "rest_sec": 30,
+                    "notes": [
+                      "肩部热身"
+                    ]
+                  }
+                ],
+                [
+                  {
+                    "exercise": "保加利亚分腿蹲（椅子/床）",
+                    "intensity": "中等",
+                    "sets": 4,
+                    "reps": "每侧12-15",
+                    "rest_sec": 60,
+                    "notes": [
+                      "注意膝盖稳定，动作缓慢"
+                    ]
+                  },
+                  {
+                    "exercise": "侧弓步",
+                    "intensity": "中等",
+                    "sets": 3,
+                    "reps": "每侧12-15",
+                    "rest_sec": 60,
+                    "notes": [
+                      "锻炼内外侧大腿"
+                    ]
+                  },
+                  {
+                    "exercise": "单腿臀桥",
+                    "intensity": "中等",
+                    "sets": 3,
+                    "reps": "每侧12-15",
+                    "rest_sec": 60,
+                    "notes": [
+                      "臀部发力，核心收紧"
+                    ]
+                  },
+                  {
+                    "exercise": "平板支撑侧抬腿",
+                    "intensity": "中等",
+                    "sets": 3,
+                    "reps": "每侧10-12",
+                    "rest_sec": 45,
+                    "notes": [
+                      "核心与臀部协同发力"
+                    ]
+                  }
+                ],
+                [
+                  {
+                    "exercise": "拉伸（股四头肌、腘绳肌、臀大肌、小腿）",
+                    "intensity": "低",
+                    "sets": 1,
+                    "reps": "每组30秒",
+                    "rest_sec": 0,
+                    "notes": [
+                      "每个动作保持30秒，促进恢复"
+                    ]
+                  }
+                ]
+              ],
+              "notes": [
+                "每组间休息60秒，热身组休息30秒。",
+                "如有余力可适当增加组数或重复循环主训练部分。"
+              ]
+            }
+          ],
+          "notes": [
+            "本计划为全身徒手训练，适合无器械环境，重点强化下肢和核心。",
+            "如有特定目标（如增肌、减脂），可进一步个性化调整。",
+            "建议每次训练后进行5-10分钟拉伸，促进恢复。"
+          ]
+        },
+        "diet_plan": {
+          "macro_target": {},
+          "meal_templates": [],
+          "notes": [
+            "未提供饮食目标，暂不做饮食建议。"
+          ]
+        }
+      },
+      "ts": 1766238688
+    },
+    {
+      "type": "Plan",
+      "props": {
+        "plan_type": "饮食规划",
+        "diet_plan": {
+          "macro_target": {
+            "kcal": 1500,
+            "protein_g": 110,
+            "carb_g": 130,
+            "fat_g": 45
+          },
+          "meal_templates": [
+            {
+              "name": "午餐",
+              "items": [
+                "香煎鸡胸肉（150g）",
+                "糙米饭（80g）",
+                "西兰花炒胡萝卜（200g）",
+                "橄榄油（10g）"
+              ],
+              "notes": [
+                "不含香菜",
+                "高蛋白、低脂肪，主食适量，蔬菜丰富"
+              ]
+            },
+            {
+              "name": "晚餐",
+              "items": [
+                "牛肉蔬菜沙拉（瘦牛肉100g，生菜、番茄、黄瓜共200g，橄榄油10g）",
+                "煮蛋（1个）",
+                "红薯（100g）"
+              ],
+              "notes": [
+                "不含香菜",
+                "蛋白质充足，蔬菜多，碳水适量"
+              ]
+            }
+          ],
+          "notes": [
+            "本计划优先采用推荐食谱，已排除香菜。",
+            "每日两餐，准备时间控制在1小时内。",
+            "如需早餐建议或更详细热量分配，请补充信息。",
+            "减脂期间建议多饮水，避免高糖高油食物。"
+          ]
+        }
+      },
+      "ts": 1766240263
+    },
+    {
+      "type": "DietLog",
+      "props": {
+        "meal": "午餐",
+        "foods": [
+          "火锅",
+          "牛肉",
+          "虾",
+          "青菜"
+        ],
+        "notes": "中午吃了火锅，包含牛肉、虾、青菜等食材。"
+      },
+      "ts": 1766241734
+    },
+    {
+      "type": "DietLog",
+      "props": {
+        "meal": "午餐",
+        "foods": [
+          "火锅",
+          "牛肉",
+          "虾",
+          "娃娃菜"
+        ],
+        "notes": "中午吃了火锅，涮了牛肉、虾和娃娃菜。"
+      },
+      "ts": 1766241847
+    },
+    {
+      "type": "DietLog",
+      "props": {
+        "meal": "午餐",
+        "foods": [
+          "火锅",
+          "牛肉",
+          "虾",
+          "娃娃菜"
+        ],
+        "notes": "中午吃了火锅，涮了牛肉、虾和娃娃菜。"
+      },
+      "ts": 1766241889
+    },
+    {
+      "type": "DietLog",
+      "props": {
+        "meal": "午餐",
+        "foods": [
+          "火锅",
+          "牛肉",
+          "虾"
+        ],
+        "notes": "中午吃了火锅，有牛肉和虾。"
+      },
+      "ts": 1766242449
+    },
+    {
+      "type": "DietLog",
+      "props": {
+        "summary": "火锅（牛肉、虾）",
+        "description": "包含了: 牛肉, 虾",
+        "calories": 350,
+        "protein": 55,
+        "carb": 0,
+        "fat": 10,
+        "meal_type": "lunch",
+        "automatic_log": true
+      },
+      "ts": 1766242607
+    },
+    {
+      "type": "QA",
+      "props": {
+        "question": "100g",
+        "answer": "您输入了“100g”，请补充具体内容（如食物名称、用量、餐次等），以便记录饮食或进行营养分析。"
+      },
+      "ts": 1766242722
+    },
+    {
+      "type": "DietLog",
+      "props": {
+        "summary": "火锅（牛肉、青菜、虾）",
+        "description": "包含了: 牛肉, 青菜, 虾",
+        "calories": 400,
+        "protein": 55,
+        "carb": 5,
+        "fat": 10,
+        "meal_type": "lunch",
+        "automatic_log": true
+      },
+      "ts": 1766243066
+    },
+    {
+      "type": "DietLog",
+      "props": {
+        "summary": "番茄炒蛋、鸡腿、米饭",
+        "description": "包含了: 番茄炒蛋, 鸡腿, 米饭",
+        "calories": 550,
+        "protein": 26,
+        "carb": 68,
+        "fat": 18,
+        "meal_type": "dinner",
+        "automatic_log": true
+      },
+      "ts": 1766243320
+    },
+    {
+      "type": "DietLog",
+      "props": {
+        "summary": "番茄炒蛋、鸡腿、米饭",
+        "description": "包含了: 番茄炒鸡蛋, 鸡腿, 米饭",
+        "calories": 550,
+        "protein": 26,
+        "carb": 68,
+        "fat": 18,
+        "meal_type": "dinner",
+        "automatic_log": true
+      },
+      "ts": 1766243651
+    },
+    {
+      "type": "DietLog",
+      "props": {
+        "summary": "番茄炒鸡蛋、鸡腿、米饭",
+        "description": "包含了: 番茄炒鸡蛋, 鸡腿, 米饭",
+        "calories": 550,
+        "protein": 26,
+        "carb": 68,
+        "fat": 18,
+        "meal_type": "dinner",
+        "automatic_log": true
+      },
+      "ts": 1766243851
+    },
+    {
+      "type": "DietLog",
+      "props": {
+        "summary": "番茄炒蛋、鸡腿、米饭",
+        "description": "包含了: 番茄炒蛋, 鸡腿, 米饭",
+        "calories": 550,
+        "protein": 26,
+        "carb": 68,
+        "fat": 18,
+        "meal_type": "dinner",
+        "automatic_log": true
+      },
+      "ts": 1766244022
+    },
+    {
+      "type": "DietLog",
+      "props": {
+        "summary": "番茄炒蛋、鸡腿、米饭",
+        "description": "包含了: 番茄炒蛋, 鸡腿, 米饭",
+        "calories": 550,
+        "protein": 26,
+        "carb": 68,
+        "fat": 18,
+        "meal_type": "dinner",
+        "automatic_log": true
+      },
+      "ts": 1766244869
+    },
+    {
+      "type": "DietLog",
+      "props": {
+        "summary": "番茄炒蛋、鸡腿、米饭",
+        "description": "包含了: 番茄炒蛋, 鸡腿, 米饭",
+        "calories": 550,
+        "protein": 26,
+        "carb": 68,
+        "fat": 18,
+        "meal_type": "dinner",
+        "automatic_log": true
+      },
+      "ts": 1766244909
+    },
+    {
+      "type": "DietLog",
+      "props": {
+        "summary": "番茄炒蛋",
+        "description": "包含了: 番茄, 鸡蛋",
+        "calories": 180,
+        "protein": 8,
+        "carb": 6,
+        "fat": 12,
+        "meal_type": "dinner",
+        "automatic_log": true
+      },
+      "ts": 1766245094
+    },
+    {
+      "type": "DietLog",
+      "props": {
+        "summary": "番茄炒蛋 100g",
+        "description": "包含了: 番茄炒蛋",
+        "calories": 80,
+        "protein": 4,
+        "carb": 2,
+        "fat": 6,
+        "meal_type": "lunch",
+        "automatic_log": true
+      },
+      "ts": 1766245883
+    },
+    {
+      "type": "DietLog",
+      "props": {
+        "summary": "番茄炒蛋（100g）",
+        "description": "包含了: 番茄炒蛋",
+        "calories": 80,
+        "protein": 4,
+        "carb": 2,
+        "fat": 6,
+        "meal_type": "dinner",
+        "automatic_log": true
+      },
+      "ts": 1766246107
+    },
+    {
+      "type": "DietLog",
+      "props": {
+        "summary": "番茄炒蛋（100g）",
+        "description": "包含了: 番茄炒蛋",
+        "calories": 80,
+        "protein": 4,
+        "carb": 2,
+        "fat": 6,
+        "meal_type": "dinner",
+        "automatic_log": true
+      },
+      "ts": 1766246980
+    },
+    {
+      "type": "WorkoutLog",
+      "props": {
+        "summary": "完成计划打卡: 全身徒手训练A",
+        "plan_id": "current_active",
+        "automatic_log": true
+      },
+      "ts": 1766248112
+    }
+  ]
 }

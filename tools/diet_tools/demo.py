@@ -1,7 +1,7 @@
 # main.py
 
-from query import DietKGQuery
-from diet_recommender import diet_recommendation_tool
+from tools.diet_tools.query import DietKGQuery
+from tools.diet_tools.diet_recommender import diet_recommendation_tool
 
 user = {
   "user_id": "user_001",

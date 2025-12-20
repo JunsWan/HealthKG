@@ -1,8 +1,8 @@
 # code/tools/diet_tools/diet_recommender.py
 
 from typing import Dict, Any, List
-from query import DietKGQuery
-from diet_evaluator import recommend_meals
+from tools.diet_tools.query import DietKGQuery
+from tools.diet_tools.diet_evaluator import recommend_meals
 
 
 _NEO4J_URI = "neo4j+ssc://88f8ccae.databases.neo4j.io"

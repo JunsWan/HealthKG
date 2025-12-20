@@ -569,3 +569,52 @@ MEMORY_UPDATER_RESPONSE_FORMAT = {
     }
   }
 }
+
+DIET_LOGGER_RESPONSE_FORMAT = {
+  "type": "json_schema",
+  "json_schema": {
+    "name": "diet_logger",
+    "strict": True,
+    "schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": ["log", "clarify"],
+          "description": "If key info (quantity) is missing, choose 'clarify'. If sufficient or estimatable, choose 'log'."
+        },
+        "clarification_question": {
+          "type": "string", 
+          "description": "Question to ask user for missing details (e.g. 'How many grams of beef?')"
+        },
+        "log_data": {
+          "type": "object",
+          "properties": {
+            "summary": {"type": "string", "description": "Short summary for UI list (e.g. 'Beef Hotpot (Beef, Shrimp)')"},
+            "foods": {"type": "array", "items": {"type": "string"}},
+            "total_calories": {"type": "number"},
+            "macros": {
+              "type": "object",
+              "properties": {
+                "protein": {"type": "number"},
+                "carb": {"type": "number"},
+                "fat": {"type": "number"}
+              },
+              "required": ["protein", "carb", "fat"],
+              "additionalProperties": False
+            },
+            "meal_type": {"type": "string", "enum": ["breakfast", "lunch", "dinner", "snack"]}
+          },
+          "required": ["summary", "foods", "total_calories", "macros", "meal_type"],
+          "additionalProperties": False
+        },
+        "feedback_response": {
+          "type": "string",
+          "description": "Response to user. If log: confirm what was recorded & totals. If clarify: ask the question."
+        }
+      },
+      "required": ["status", "clarification_question", "log_data", "feedback_response"],
+      "additionalProperties": False
+    }
+  }
+}

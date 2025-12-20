@@ -6,6 +6,8 @@ from typing import Dict, Any, Optional
 class DietKGQuery:
 
     def __init__(self, uri, auth):
+        masked_uri = uri
+        print(f"[DietKGQuery] Connecting to: {masked_uri} ...")
         self.driver = GraphDatabase.driver(uri, auth=auth)
 
     def close(self):
@@ -155,7 +157,94 @@ class DietKGQuery:
             )
 
             return [record.data() for record in result]
-    
+
+    def _probe_db_structure(self):
+        """
+        当搜索失败时，自动诊断数据库结构
+        """
+        print("\n[DietKG Diagnostic] === 开始自检 ===")
+        with self.driver.session() as session:
+            try:
+                # 1. 检查有没有 Recipe 节点
+                cnt = session.run("MATCH (n:Recipe) RETURN count(n) as c").single()["c"]
+                print(f"[DietKG Diagnostic] Recipe 节点数量: {cnt}")
+                
+                if cnt > 0:
+                    # 2. 如果有，采样一个看看属性名叫啥
+                    sample = session.run("MATCH (n:Recipe) RETURN n LIMIT 1").single()["n"]
+                    print(f"[DietKG Diagnostic] Recipe 属性键采样: {list(sample.keys())}")
+                    print(f"[DietKG Diagnostic] Recipe 样本数据: {dict(sample)}")
+                else:
+                    # 3. 如果没有 Recipe，看看有啥 Label
+                    labels = session.run("CALL db.labels()").value()
+                    print(f"[DietKG Diagnostic] 数据库中存在的所有 Labels: {labels}")
+                    if not labels:
+                        print("[DietKG Diagnostic] 🚨 警告：数据库是空的！")
+            except Exception as e:
+                print(f"[DietKG Diagnostic] 自检失败: {e}")
+        print("[DietKG Diagnostic] === 自检结束 ===\n")
+
+    def search_items(self, keyword: str, limit: int = 5):
+        """
+        [Fixed] 最终修正：根据诊断结果，Recipe 节点使用 name 属性
+        """
+        results = []
+        
+        # 1. 搜食谱 (Recipe)
+        # 诊断确认：属性名为 name，且 calories 存在
+        cypher_recipe = """
+        MATCH (r:Recipe)
+        WHERE toLower(r.name) CONTAINS toLower($kw)
+        RETURN 
+            elementId(r) as id, 
+            r.name as name, 
+            COALESCE(r.calories, 0) as cal, 
+            'Recipe' as type, 
+            COALESCE(r.dish_type, '') as desc
+        LIMIT $limit
+        """
+        
+        # 2. 搜食材 (Ingredient)
+        cypher_ing = """
+        MATCH (i:Ingredient)
+        WHERE toLower(i.name) CONTAINS toLower($kw)
+        RETURN 
+            elementId(i) as id, 
+            i.name as name, 
+            'Ingredient' as type, 
+            'Basic Ingredient' as desc
+        LIMIT $limit
+        """
+        
+        with self.driver.session() as session:
+            try:
+                # 1. 搜食谱
+                ret_r = session.run(cypher_recipe, kw=keyword, limit=limit)
+                for record in ret_r:
+                    data = record.data()
+                    # list转string清洗
+                    if isinstance(data.get("desc"), list):
+                        data["desc"] = ", ".join(data["desc"])
+                    results.append(data)
+                
+                # 2. 搜食材 (补位)
+                if len(results) < limit:
+                    ret_i = session.run(cypher_ing, kw=keyword, limit=limit - len(results))
+                    for record in ret_i:
+                        data = record.data()
+                        data["cal"] = None
+                        results.append(data)
+
+            except Exception as e:
+                print(f"[KG Search Error] {e}")
+
+        # 如果还是搜不到，可能就是真的没有这个菜（Translation mismatch），
+        # 但至少不会再报 property missing 的警告了。
+        if not results:
+            print(f"[DietKG] ⚠️ 关键词 '{keyword}' 搜索结果为空 (Schema 已确认无误)")
+            # 可以在这里做个兜底，比如搜不到全名就拆词搜，或者直接返回空让 DietLogger 估算
+            
+        return results
     def get_recipe_full_detail_by_name(
         self,
         recipe_name: str

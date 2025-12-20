@@ -4,7 +4,7 @@ from typing import List, Dict, Any
 from itertools import combinations
 from datetime import datetime, timedelta
 import math
-from query import *
+from tools.diet_tools.query import *
 from collections import defaultdict
 import time
 import numpy
