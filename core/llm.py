@@ -30,4 +30,5 @@ def chat(instruction, user_message, model="gpt-4.1", response_format=None):
         except Exception as e:
             last_e = e
             continue
+    print(instruction)
     raise RuntimeError(f"LLM request failed after retries: {last_e}")

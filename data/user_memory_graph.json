@@ -7,17 +7,38 @@
         "duration_min": 60,
         "days_per_week": 3
       },
-      "last_updated": 1766240263
+      "last_updated": 1766376151
     },
     {
       "id": "constraint:equipment",
-      "type": "Unknown",
+      "type": "Constraint",
       "props": {
-        "equipment": [
-          "徒手"
+        "items": [
+          "Barbell",
+          "Dumbbell",
+          "Cable",
+          "Lever"
         ]
       },
-      "last_updated": 1766238688
+      "last_updated": 1734500000
+    },
+    {
+      "id": "injury:waist",
+      "type": "Injury",
+      "props": {
+        "name": "Waist",
+        "status": "active"
+      },
+      "last_updated": 1734300000
+    },
+    {
+      "id": "injury:Neck",
+      "type": "Injury",
+      "props": {
+        "name": "Neck",
+        "status": "active"
+      },
+      "last_updated": 1734300000
     },
     {
       "id": "goal:primary",
@@ -25,7 +46,7 @@
       "props": {
         "goal": "减脂"
       },
-      "last_updated": 1766240263
+      "last_updated": 1766376151
     },
     {
       "id": "pref:diet",
@@ -34,9 +55,9 @@
         "diet_pref": [
           "不吃香菜"
         ],
-        "meal_schedule": "每天午餐晚餐"
+        "meal_schedule": "每天早餐午餐晚餐"
       },
-      "last_updated": 1766240263
+      "last_updated": 1766366680
     }
   ],
   "edges": [],
@@ -622,6 +643,2034 @@
         "automatic_log": true
       },
       "ts": 1766248112
+    },
+    {
+      "type": "Plan",
+      "props": {
+        "plan_type": "训练+饮食规划",
+        "workout_plan": {
+          "schedule": "每周3次，隔天进行，单次约60分钟",
+          "notes": [
+            "本计划为减脂目标设计，器械为徒手，适合初中级人群。",
+            "如有不适或疲劳，请适当减少组数或休息时间。"
+          ],
+          "sessions": [
+            {
+              "name": "全身徒手训练A",
+              "duration_min": 60,
+              "notes": [
+                "建议每周进行3次，间隔一天休息。"
+              ],
+              "items": [
+                {
+                  "exercise": "手臂绕环",
+                  "sets": 2,
+                  "reps": "20圈/方向",
+                  "rest_sec": 30,
+                  "intensity": "热身",
+                  "notes": [
+                    "活动肩关节，预防运动损伤。"
+                  ]
+                },
+                {
+                  "exercise": "开合跳",
+                  "sets": 2,
+                  "reps": "40",
+                  "rest_sec": 30,
+                  "intensity": "热身",
+                  "notes": [
+                    "全身热身，提升心率。"
+                  ]
+                },
+                {
+                  "exercise": "登山跑",
+                  "sets": 4,
+                  "reps": "40秒",
+                  "rest_sec": 45,
+                  "intensity": "中高强度",
+                  "notes": [
+                    "提升心率，促进脂肪燃烧。"
+                  ]
+                },
+                {
+                  "exercise": "深蹲跳",
+                  "sets": 4,
+                  "reps": "15",
+                  "rest_sec": 60,
+                  "intensity": "高强度",
+                  "notes": [
+                    "增强下肢爆发力，提升代谢。"
+                  ]
+                },
+                {
+                  "exercise": "反向箭步蹲",
+                  "sets": 4,
+                  "reps": "12/腿",
+                  "rest_sec": 45,
+                  "intensity": "中强度",
+                  "notes": [
+                    "锻炼臀腿，提升稳定性。"
+                  ]
+                },
+                {
+                  "exercise": "靠墙静蹲",
+                  "sets": 3,
+                  "reps": "60秒",
+                  "rest_sec": 45,
+                  "intensity": "中强度",
+                  "notes": [
+                    "增强腿部耐力。"
+                  ]
+                },
+                {
+                  "exercise": "俯身登山者",
+                  "sets": 4,
+                  "reps": "25",
+                  "rest_sec": 45,
+                  "intensity": "中高强度",
+                  "notes": [
+                    "核心与心肺双重刺激。"
+                  ]
+                },
+                {
+                  "exercise": "拉伸（股四头肌、腘绳肌、臀大肌、小腿）",
+                  "sets": 1,
+                  "reps": "每组40秒",
+                  "rest_sec": 0,
+                  "intensity": "拉伸",
+                  "notes": [
+                    "训练结束后，充分拉伸，缓解肌肉紧张。"
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "饮食计划",
+              "notes": [
+                "本计划为减脂目标设计，优先采用推荐食材。",
+                "如需早餐建议或更详细热量分配，请补充信息。",
+                "每日饮水不少于2000ml。"
+              ]
+            }
+          ]
+        },
+        "diet_plan": {
+          "macro_target": {
+            "protein_g": 120,
+            "carb_g": 180,
+            "fat_g": 45,
+            "kcal": 1700
+          },
+          "meal_templates": [
+            {
+              "name": "午餐",
+              "items": [
+                "香煎鸡胸肉 150g",
+                "糙米饭 100g",
+                "西兰花炒胡萝卜 150g",
+                "橄榄油 5g"
+              ],
+              "notes": [
+                "优先选择高蛋白、低脂肪食材。",
+                "不含香菜，符合饮食偏好。"
+              ]
+            },
+            {
+              "name": "晚餐",
+              "items": [
+                "牛肉蔬菜沙拉（牛肉100g，生菜、番茄、黄瓜）",
+                "煮蛋 2个",
+                "红薯 150g"
+              ],
+              "notes": [
+                "控制碳水摄入，保证蛋白充足。",
+                "不含香菜，符合饮食偏好。"
+              ]
+            }
+          ],
+          "notes": [
+            "本计划为减脂目标设计，优先采用推荐食材。",
+            "如需早餐建议或更详细热量分配，请补充信息。",
+            "每日饮水不少于2000ml。"
+          ]
+        }
+      },
+      "ts": 1766325283
+    },
+    {
+      "type": "WorkoutLog",
+      "props": {
+        "summary": "完成 Straight Hip Leg Curl (on ball)",
+        "exercise_id": "Straight Hip Leg Curl (on ball)__Thigh__Body Weight__Hamstrings",
+        "body_part": "Thigh",
+        "target_muscles": [
+          "Hamstrings"
+        ],
+        "plan_id": "current_active",
+        "automatic_log": true
+      },
+      "ts": 1766325399
+    },
+    {
+      "type": "WorkoutLog",
+      "props": {
+        "summary": "完成 Single Leg Split Squat",
+        "exercise_id": "Single Leg Split Squat__Thigh__Barbell__Quadriceps",
+        "body_part": "Thigh",
+        "target_muscles": [
+          "Quadriceps"
+        ],
+        "plan_id": "current_active",
+        "automatic_log": true
+      },
+      "ts": 1766325399
+    },
+    {
+      "type": "WorkoutLog",
+      "ts": 1734585600,
+      "props": {
+        "summary": "上肢训练",
+        "exercise_id": "Barbell Bench Press",
+        "body_part": "Chest",
+        "target_muscles": [
+          "Pectoralis Major",
+          "Triceps"
+        ],
+        "plan_id": "current_active",
+        "automatic_log": true
+      }
+    },
+    {
+      "type": "WorkoutLog",
+      "ts": 1734672000,
+      "props": {
+        "summary": "颈部训练",
+        "exercise_id": "Neck Flexion__Neck__Weighted__Sternocleidomastoid",
+        "body_part": "Neck",
+        "target_muscles": [
+          "Sternocleidomastoid"
+        ],
+        "automatic_log": false
+      }
+    },
+    {
+      "type": "WorkoutLog",
+      "props": {
+        "summary": "完成 with rope",
+        "exercise_id": "with rope__Should__Cable__Deltoid, Lateral",
+        "body_part": "Should",
+        "target_muscles": [
+          "Deltoid, Lateral"
+        ],
+        "plan_id": "current_active",
+        "automatic_log": true
+      },
+      "ts": 1766327365
+    },
+    {
+      "type": "WorkoutLog",
+      "props": {
+        "summary": "完成 Seated Rear Delt Row",
+        "exercise_id": "Seated Rear Delt Row__Should__Lever (plate loaded)__Deltoid, Posterior",
+        "body_part": "Should",
+        "target_muscles": [
+          "Deltoid, Posterior"
+        ],
+        "plan_id": "current_active",
+        "automatic_log": true
+      },
+      "ts": 1766327365
+    },
+    {
+      "type": "Plan",
+      "props": {
+        "plan_type": "晚餐饮食规划",
+        "diet_plan": {
+          "macro_target": {
+            "kcal": 450,
+            "protein_g": 40,
+            "carb_g": 45,
+            "fat_g": 12
+          },
+          "meal_templates": [
+            {
+              "name": "牛肉蔬菜沙拉晚餐",
+              "items": [
+                "牛肉蔬菜沙拉（瘦牛肉100g，生菜、番茄、黄瓜共200g，橄榄油10g）",
+                "煮蛋1个",
+                "红薯100g"
+              ],
+              "notes": [
+                "高蛋白、低脂肪，适合减脂期晚餐。",
+                "橄榄油用量已控制，建议不额外添加高脂调味料。",
+                "不含香菜，符合饮食偏好。"
+              ]
+            },
+            {
+              "name": "牛肉蔬菜沙拉晚餐（加量版）",
+              "items": [
+                "牛肉蔬菜沙拉（牛肉100g，生菜、番茄、黄瓜）",
+                "煮蛋2个",
+                "红薯150g"
+              ],
+              "notes": [
+                "蛋白质和碳水略高，适合运动量较大或饥饿感强时。",
+                "不含香菜。"
+              ]
+            },
+            {
+              "name": "番茄炒蛋鸡腿米饭晚餐（口味替换）",
+              "items": [
+                "番茄炒蛋（番茄100g，鸡蛋1个）",
+                "鸡腿100g",
+                "米饭80g"
+              ],
+              "notes": [
+                "碳水和脂肪略高，建议适量控制米饭份量。",
+                "不含香菜。"
+              ]
+            }
+          ],
+          "notes": [
+            "本计划优先采用知识图谱推荐的晚餐组合，已过滤香菜。",
+            "如需更多晚餐选择或详细营养素分配，请补充相关信息。",
+            "减脂期建议晚餐主食适量，蛋白质充足，避免高脂肪烹饪方式。"
+          ]
+        }
+      },
+      "ts": 1766327790
+    },
+    {
+      "type": "Plan",
+      "props": {
+        "plan_type": "训练+饮食规划",
+        "workout_plan": {
+          "schedule": "每周3次，隔天进行，单次约60分钟",
+          "sessions": [
+            {
+              "name": "第1天：全身力量训练A",
+              "duration_min": 60,
+              "notes": [
+                "训练前热身5-10分钟（动态拉伸、椭圆机或快走）。",
+                "注意腰部和颈部保护，避免高负荷深蹲和颈后推举等动作。",
+                "每组间休息60-90秒。"
+              ],
+              "items": [
+                {
+                  "exercise": "杠铃深蹲（腰部保护，采用中等重量）",
+                  "sets": 3,
+                  "reps": "10-12",
+                  "intensity": "中等",
+                  "rest_sec": 90,
+                  "notes": [
+                    "保持核心收紧，避免腰部过度前倾。"
+                  ]
+                },
+                {
+                  "exercise": "哑铃平板卧推",
+                  "sets": 3,
+                  "reps": "10-12",
+                  "intensity": "中等",
+                  "rest_sec": 90,
+                  "notes": [
+                    "动作全程控制，避免耸肩。"
+                  ]
+                },
+                {
+                  "exercise": "坐姿绳索划船",
+                  "sets": 3,
+                  "reps": "12-15",
+                  "intensity": "中等",
+                  "rest_sec": 60,
+                  "notes": [
+                    "保持背部挺直，收紧肩胛。"
+                  ]
+                },
+                {
+                  "exercise": "站姿哑铃侧平举",
+                  "sets": 3,
+                  "reps": "12-15",
+                  "intensity": "中等",
+                  "rest_sec": 60,
+                  "notes": [
+                    "避免耸肩，动作缓慢。"
+                  ]
+                },
+                {
+                  "exercise": "卷腹",
+                  "sets": 3,
+                  "reps": "15-20",
+                  "intensity": "中等",
+                  "rest_sec": 45,
+                  "notes": [
+                    "动作缓慢，注意颈部放松。"
+                  ]
+                },
+                {
+                  "exercise": "拉伸（全身，重点腰部和颈部）",
+                  "sets": 1,
+                  "reps": "5-10分钟",
+                  "intensity": "低",
+                  "rest_sec": 0,
+                  "notes": [
+                    "训练结束后进行，缓解紧张。"
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "第2天：全身力量训练B",
+              "duration_min": 60,
+              "notes": [
+                "训练前热身5-10分钟（动态拉伸、椭圆机或快走）。",
+                "注意腰部和颈部保护，避免高负荷硬拉和颈后动作。",
+                "每组间休息60-90秒。"
+              ],
+              "items": [
+                {
+                  "exercise": "杠铃箭步蹲",
+                  "sets": 3,
+                  "reps": "10-12",
+                  "intensity": "中等",
+                  "rest_sec": 90,
+                  "notes": [
+                    "保持核心收紧，步幅适中。"
+                  ]
+                },
+                {
+                  "exercise": "杠铃俯身划船",
+                  "sets": 3,
+                  "reps": "10-12",
+                  "intensity": "中等",
+                  "rest_sec": 90,
+                  "notes": [
+                    "背部挺直，避免腰部代偿。"
+                  ]
+                },
+                {
+                  "exercise": "哑铃肩推（坐姿）",
+                  "sets": 3,
+                  "reps": "10-12",
+                  "intensity": "中等",
+                  "rest_sec": 60,
+                  "notes": [
+                    "坐姿保护腰部，避免颈部过度后仰。"
+                  ]
+                },
+                {
+                  "exercise": "绳索下压",
+                  "sets": 3,
+                  "reps": "12-15",
+                  "intensity": "中等",
+                  "rest_sec": 60,
+                  "notes": [
+                    "动作全程控制，肘部固定。"
+                  ]
+                },
+                {
+                  "exercise": "仰卧抬腿",
+                  "sets": 3,
+                  "reps": "15-20",
+                  "intensity": "中等",
+                  "rest_sec": 45,
+                  "notes": [
+                    "腰部贴紧地面，动作缓慢。"
+                  ]
+                },
+                {
+                  "exercise": "拉伸（全身，重点腰部和颈部）",
+                  "sets": 1,
+                  "reps": "5-10分钟",
+                  "intensity": "低",
+                  "rest_sec": 0,
+                  "notes": [
+                    "训练结束后进行，缓解紧张。"
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "第3天：全身力量训练C",
+              "duration_min": 60,
+              "notes": [
+                "训练前热身5-10分钟（动态拉伸、椭圆机或快走）。",
+                "注意腰部和颈部保护，避免高冲击动作。",
+                "每组间休息60-90秒。"
+              ],
+              "items": [
+                {
+                  "exercise": "杠铃罗马尼亚硬拉（轻重量）",
+                  "sets": 3,
+                  "reps": "10-12",
+                  "intensity": "中等",
+                  "rest_sec": 90,
+                  "notes": [
+                    "动作缓慢，注意腰部发力。"
+                  ]
+                },
+                {
+                  "exercise": "哑铃上斜卧推",
+                  "sets": 3,
+                  "reps": "10-12",
+                  "intensity": "中等",
+                  "rest_sec": 90,
+                  "notes": [
+                    "动作全程控制，避免耸肩。"
+                  ]
+                },
+                {
+                  "exercise": "坐姿后束飞鸟",
+                  "sets": 3,
+                  "reps": "12-15",
+                  "intensity": "中等",
+                  "rest_sec": 60,
+                  "notes": [
+                    "动作缓慢，肩胛收紧。"
+                  ]
+                },
+                {
+                  "exercise": "杠铃弯举",
+                  "sets": 3,
+                  "reps": "12-15",
+                  "intensity": "中等",
+                  "rest_sec": 60,
+                  "notes": [
+                    "动作全程控制，避免借力。"
+                  ]
+                },
+                {
+                  "exercise": "平板支撑",
+                  "sets": 3,
+                  "reps": "30-45秒",
+                  "intensity": "中等",
+                  "rest_sec": 45,
+                  "notes": [
+                    "保持身体一条直线，核心收紧。"
+                  ]
+                },
+                {
+                  "exercise": "拉伸（全身，重点腰部和颈部）",
+                  "sets": 1,
+                  "reps": "5-10分钟",
+                  "intensity": "低",
+                  "rest_sec": 0,
+                  "notes": [
+                    "训练结束后进行，缓解紧张。"
+                  ]
+                }
+              ]
+            }
+          ],
+          "notes": [
+            "每次训练前热身5-10分钟（动态拉伸、椭圆机或快走）。",
+            "训练后进行全身拉伸，尤其注意腰部和颈部的放松。",
+            "如有不适，及时调整动作或减少重量。"
+          ]
+        },
+        "diet_plan": {
+          "macro_target": {
+            "kcal": 1700,
+            "protein_g": 120,
+            "carb_g": 160,
+            "fat_g": 50
+          },
+          "meal_templates": [
+            {
+              "name": "早餐",
+              "items": [
+                "燕麦片（40g）+ 脱脂牛奶（250ml）",
+                "水煮蛋2个",
+                "苹果1个"
+              ],
+              "notes": [
+                "高蛋白、低脂肪，避免香菜。"
+              ]
+            },
+            {
+              "name": "午餐",
+              "items": [
+                "糙米饭（100g）",
+                "清蒸鸡胸肉（120g）",
+                "西兰花/胡萝卜/玉米（任选2种，合计150g）",
+                "橄榄油拌蔬菜沙拉（不加香菜）"
+              ],
+              "notes": [
+                "主食适量，蛋白质充足，蔬菜丰富。"
+              ]
+            },
+            {
+              "name": "晚餐",
+              "items": [
+                "煎三文鱼（100g）",
+                "紫薯（80g）",
+                "清炒菠菜/生菜（100g）"
+              ],
+              "notes": [
+                "低碳水，优质脂肪，避免香菜。"
+              ]
+            }
+          ],
+          "notes": [
+            "三餐均衡分配热量，早餐约400kcal，午餐约700kcal，晚餐约600kcal。",
+            "每日饮水1500-2000ml，避免高糖饮料。",
+            "如有饥饿可适量加餐：无糖酸奶、坚果（10g以内）、水果（如橙、猕猴桃）。"
+          ]
+        }
+      },
+      "ts": 1766328070
+    },
+    {
+      "type": "Plan",
+      "props": {
+        "plan_type": "训练+饮食规划",
+        "workout_plan": {
+          "schedule": "每周3次全身训练，间隔1天（如周一/三/五）",
+          "notes": [
+            "每次训练约60分钟，包含热身、复合动作、孤立动作、核心训练和拉伸。",
+            "所有动作避免腰部和颈部高风险，核心训练以无负重和静态为主。",
+            "组间休息60-90秒，强度适合初中级，动作控制为主。"
+          ],
+          "sessions": [
+            {
+              "name": "全身力量训练A",
+              "duration_min": 60,
+              "notes": [
+                "激活腿部、胸部、背部、核心。"
+              ],
+              "items": [
+                {
+                  "exercise": "动态拉伸（全身）",
+                  "sets": 1,
+                  "reps": "8-10分钟",
+                  "rest_sec": 0,
+                  "intensity": "低",
+                  "notes": [
+                    "高抬腿、肩环绕、髋部活动。"
+                  ]
+                },
+                {
+                  "exercise": "杠铃箭步蹲",
+                  "sets": 3,
+                  "reps": "10-12/腿",
+                  "rest_sec": 75,
+                  "intensity": "中",
+                  "notes": [
+                    "保持躯干直立，避免腰部过度前倾。"
+                  ]
+                },
+                {
+                  "exercise": "哑铃平板卧推",
+                  "sets": 3,
+                  "reps": "10-12",
+                  "rest_sec": 75,
+                  "intensity": "中",
+                  "notes": [
+                    "肩胛收紧，颈部自然放松。"
+                  ]
+                },
+                {
+                  "exercise": "坐姿绳索划船",
+                  "sets": 3,
+                  "reps": "12-15",
+                  "rest_sec": 75,
+                  "intensity": "中",
+                  "notes": [
+                    "背部收紧，避免耸肩。"
+                  ]
+                },
+                {
+                  "exercise": "卷腹",
+                  "sets": 3,
+                  "reps": "15-20",
+                  "rest_sec": 60,
+                  "intensity": "中",
+                  "notes": [
+                    "动作缓慢，避免拉扯颈部。"
+                  ]
+                },
+                {
+                  "exercise": "拉伸（全身）",
+                  "sets": 1,
+                  "reps": "8-10分钟",
+                  "rest_sec": 0,
+                  "intensity": "低",
+                  "notes": [
+                    "重点拉伸腿部、胸部、背部。"
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "全身力量训练B",
+              "duration_min": 60,
+              "notes": [
+                "肩部、背部、腿部、核心轮换刺激。"
+              ],
+              "items": [
+                {
+                  "exercise": "动态拉伸（全身）",
+                  "sets": 1,
+                  "reps": "8-10分钟",
+                  "rest_sec": 0,
+                  "intensity": "低",
+                  "notes": [
+                    "肩环绕、髋部活动。"
+                  ]
+                },
+                {
+                  "exercise": "杠铃深蹲（轻重量或空杠）",
+                  "sets": 3,
+                  "reps": "10-12",
+                  "rest_sec": 90,
+                  "intensity": "中",
+                  "notes": [
+                    "核心收紧，避免腰部塌陷。"
+                  ]
+                },
+                {
+                  "exercise": "杠铃俯身划船（轻重量）",
+                  "sets": 3,
+                  "reps": "10-12",
+                  "rest_sec": 75,
+                  "intensity": "中",
+                  "notes": [
+                    "背部发力，动作控制，腰背保持中立。"
+                  ]
+                },
+                {
+                  "exercise": "站姿哑铃侧平举",
+                  "sets": 3,
+                  "reps": "12-15",
+                  "rest_sec": 60,
+                  "intensity": "中",
+                  "notes": [
+                    "手肘微屈，避免耸肩。"
+                  ]
+                },
+                {
+                  "exercise": "仰卧抬腿",
+                  "sets": 3,
+                  "reps": "15-20",
+                  "rest_sec": 60,
+                  "intensity": "中",
+                  "notes": [
+                    "下背贴地，避免腰部拉伤。"
+                  ]
+                },
+                {
+                  "exercise": "拉伸（全身）",
+                  "sets": 1,
+                  "reps": "8-10分钟",
+                  "rest_sec": 0,
+                  "intensity": "低",
+                  "notes": [
+                    "重点拉伸腿部、背部、肩部。"
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "全身力量训练C",
+              "duration_min": 60,
+              "notes": [
+                "胸部、肩部、核心、腿后侧为主。"
+              ],
+              "items": [
+                {
+                  "exercise": "动态拉伸（全身）",
+                  "sets": 1,
+                  "reps": "8-10分钟",
+                  "rest_sec": 0,
+                  "intensity": "低",
+                  "notes": [
+                    "肩环绕、髋部活动。"
+                  ]
+                },
+                {
+                  "exercise": "哑铃上斜卧推",
+                  "sets": 3,
+                  "reps": "10-12",
+                  "rest_sec": 75,
+                  "intensity": "中",
+                  "notes": [
+                    "肩胛收紧，颈部自然放松。"
+                  ]
+                },
+                {
+                  "exercise": "杠铃罗马尼亚硬拉（轻重量）",
+                  "sets": 3,
+                  "reps": "10-12",
+                  "rest_sec": 90,
+                  "intensity": "中",
+                  "notes": [
+                    "动作控制，避免腰部过度拉伸。"
+                  ]
+                },
+                {
+                  "exercise": "哑铃肩推（坐姿）",
+                  "sets": 3,
+                  "reps": "10-12",
+                  "rest_sec": 75,
+                  "intensity": "中",
+                  "notes": [
+                    "坐姿保护腰部，动作缓慢。"
+                  ]
+                },
+                {
+                  "exercise": "平板支撑",
+                  "sets": 3,
+                  "reps": "30-45秒",
+                  "rest_sec": 60,
+                  "intensity": "中",
+                  "notes": [
+                    "核心收紧，保持身体直线。"
+                  ]
+                },
+                {
+                  "exercise": "拉伸（全身）",
+                  "sets": 1,
+                  "reps": "8-10分钟",
+                  "rest_sec": 0,
+                  "intensity": "低",
+                  "notes": [
+                    "重点拉伸胸部、肩部、腿后侧。"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "diet_plan": {
+          "macro_target": {
+            "kcal": 1700,
+            "protein_g": 120,
+            "carb_g": 160,
+            "fat_g": 50
+          },
+          "meal_templates": [
+            {
+              "name": "早餐",
+              "items": [
+                "燕麦片 40g",
+                "脱脂牛奶 250ml",
+                "水煮蛋 2个",
+                "苹果 1个"
+              ],
+              "notes": [
+                "高蛋白、低脂肪，提供充足能量启动新陈代谢。"
+              ]
+            },
+            {
+              "name": "午餐",
+              "items": [
+                "糙米饭 100g",
+                "鸡胸肉 120g",
+                "西兰花 80g",
+                "胡萝卜 50g",
+                "橄榄油 5g"
+              ],
+              "notes": [
+                "高蛋白、低脂肪，蔬菜丰富，饱腹感强。"
+              ]
+            },
+            {
+              "name": "晚餐",
+              "items": [
+                "紫薯 100g",
+                "鸡蛋 1个",
+                "三文鱼 80g",
+                "生菜 50g",
+                "番茄 50g",
+                "坚果 10g"
+              ],
+              "notes": [
+                "优质蛋白+健康脂肪，控制碳水，利于夜间恢复。"
+              ]
+            }
+          ],
+          "notes": [
+            "三餐均衡分配热量，优先高蛋白、低脂肪食材。",
+            "不含香菜，蔬菜可轮换，水果建议餐后食用。",
+            "如训练日可适当增加碳水摄入（如多加糙米饭/紫薯）。"
+          ]
+        }
+      },
+      "ts": 1766328238
+    },
+    {
+      "type": "Plan",
+      "props": {
+        "plan_type": "训练+饮食规划",
+        "workout_plan": {
+          "schedule": "每周3次，单次约60分钟",
+          "sessions": [
+            {
+              "name": "全身训练A",
+              "duration_min": 60,
+              "notes": [
+                "建议训练前进行5-10分钟动态热身（如椭圆机、开合跳、肩部环绕）。"
+              ],
+              "items": [
+                [
+                  {
+                    "exercise": "椭圆机/动态热身",
+                    "sets": 1,
+                    "reps": "5-10分钟",
+                    "rest_sec": 0,
+                    "intensity": "低强度，激活全身",
+                    "notes": [
+                      "如无椭圆机可用开合跳、原地高抬腿等替代"
+                    ]
+                  }
+                ],
+                [
+                  {
+                    "exercise": "杠铃深蹲",
+                    "sets": 3,
+                    "reps": "10-12",
+                    "rest_sec": 90,
+                    "intensity": "中等重量，动作规范，核心收紧，避免腰部过度前倾",
+                    "notes": [
+                      "如腰部不适可改为哑铃深蹲或减少重量"
+                    ]
+                  }
+                ],
+                [
+                  {
+                    "exercise": "杠铃俯身划船",
+                    "sets": 3,
+                    "reps": "10-12",
+                    "rest_sec": 90,
+                    "intensity": "中等重量，背部发力，保持脊柱中立",
+                    "notes": [
+                      "颈部保持自然，避免耸肩"
+                    ]
+                  }
+                ],
+                [
+                  {
+                    "exercise": "哑铃平板卧推",
+                    "sets": 3,
+                    "reps": "10-12",
+                    "rest_sec": 90,
+                    "intensity": "中等重量，动作缓慢控制"
+                  }
+                ],
+                [
+                  {
+                    "exercise": "坐姿绳索划船",
+                    "sets": 3,
+                    "reps": "12-15",
+                    "rest_sec": 60,
+                    "intensity": "中等重量，背部收缩，肩胛骨夹紧"
+                  }
+                ],
+                [
+                  {
+                    "exercise": "卷腹",
+                    "sets": 3,
+                    "reps": "15-20",
+                    "rest_sec": 45,
+                    "intensity": "自重，动作缓慢"
+                  }
+                ],
+                [
+                  {
+                    "exercise": "拉伸",
+                    "sets": 1,
+                    "reps": "全身主要肌群，每组30秒",
+                    "rest_sec": 0,
+                    "intensity": "放松"
+                  }
+                ]
+              ]
+            },
+            {
+              "name": "全身训练B",
+              "duration_min": 60,
+              "notes": [
+                "训练前热身同A。"
+              ],
+              "items": [
+                [
+                  {
+                    "exercise": "椭圆机/动态热身",
+                    "sets": 1,
+                    "reps": "5-10分钟",
+                    "rest_sec": 0,
+                    "intensity": "低强度，激活全身"
+                  }
+                ],
+                [
+                  {
+                    "exercise": "杠铃箭步蹲",
+                    "sets": 3,
+                    "reps": "10-12（每腿）",
+                    "rest_sec": 90,
+                    "intensity": "中等重量，注意膝盖与脚尖方向一致",
+                    "notes": [
+                      "腰部不适可改为哑铃箭步蹲"
+                    ]
+                  }
+                ],
+                [
+                  {
+                    "exercise": "哑铃肩推",
+                    "sets": 3,
+                    "reps": "10-12",
+                    "rest_sec": 90,
+                    "intensity": "中等重量，动作缓慢，避免耸肩"
+                  }
+                ],
+                [
+                  {
+                    "exercise": "站姿哑铃侧平举",
+                    "sets": 3,
+                    "reps": "12-15",
+                    "rest_sec": 60,
+                    "intensity": "轻中重量，控制动作"
+                  }
+                ],
+                [
+                  {
+                    "exercise": "仰卧抬腿",
+                    "sets": 3,
+                    "reps": "15-20",
+                    "rest_sec": 45,
+                    "intensity": "自重，核心收紧"
+                  }
+                ],
+                [
+                  {
+                    "exercise": "拉伸",
+                    "sets": 1,
+                    "reps": "全身主要肌群，每组30秒",
+                    "rest_sec": 0,
+                    "intensity": "放松"
+                  }
+                ]
+              ]
+            },
+            {
+              "name": "全身训练C",
+              "duration_min": 60,
+              "notes": [
+                "训练前热身同A。"
+              ],
+              "items": [
+                [
+                  {
+                    "exercise": "椭圆机/动态热身",
+                    "sets": 1,
+                    "reps": "5-10分钟",
+                    "rest_sec": 0,
+                    "intensity": "低强度，激活全身"
+                  }
+                ],
+                [
+                  {
+                    "exercise": "杠铃深蹲",
+                    "sets": 3,
+                    "reps": "10-12",
+                    "rest_sec": 90,
+                    "intensity": "中等重量，核心收紧"
+                  }
+                ],
+                [
+                  {
+                    "exercise": "坐姿绳索划船",
+                    "sets": 3,
+                    "reps": "12-15",
+                    "rest_sec": 60,
+                    "intensity": "中等重量，背部收缩"
+                  }
+                ],
+                [
+                  {
+                    "exercise": "哑铃平板卧推",
+                    "sets": 3,
+                    "reps": "10-12",
+                    "rest_sec": 90,
+                    "intensity": "中等重量"
+                  }
+                ],
+                [
+                  {
+                    "exercise": "平板支撑",
+                    "sets": 3,
+                    "reps": "30-45秒",
+                    "rest_sec": 45,
+                    "intensity": "自重，核心收紧"
+                  }
+                ],
+                [
+                  {
+                    "exercise": "拉伸",
+                    "sets": 1,
+                    "reps": "全身主要肌群，每组30秒",
+                    "rest_sec": 0,
+                    "intensity": "放松"
+                  }
+                ]
+              ]
+            }
+          ],
+          "notes": [
+            "每次训练包含热身、复合动作、孤立动作、核心训练和拉伸，时长约60分钟。",
+            "腰部和颈部动作均有保护提示。"
+          ]
+        },
+        "diet_plan": {
+          "macro_target": {
+            "kcal": 1700,
+            "protein_g": 120,
+            "carb_g": 160,
+            "fat_g": 45
+          },
+          "meal_templates": [
+            {
+              "name": "早餐",
+              "items": [
+                "燕麦片 40g",
+                "脱脂牛奶 250ml",
+                "水煮蛋 2个",
+                "苹果 1个"
+              ],
+              "notes": [
+                "高纤维、优质蛋白，低脂肪"
+              ]
+            },
+            {
+              "name": "午餐",
+              "items": [
+                "糙米饭 100g",
+                "鸡胸肉 120g",
+                "西兰花 100g",
+                "胡萝卜 50g",
+                "橄榄油 5g"
+              ],
+              "notes": [
+                "高蛋白、低脂肪，蔬菜丰富"
+              ]
+            },
+            {
+              "name": "晚餐",
+              "items": [
+                "紫薯 100g",
+                "三文鱼 100g",
+                "生菜 50g",
+                "番茄 50g",
+                "坚果 10g"
+              ],
+              "notes": [
+                "优质脂肪、蛋白，低碳水"
+              ]
+            }
+          ],
+          "notes": [
+            "全日饮食不含香菜，蛋白充足，脂肪控制，碳水适量。",
+            "如训练日可适当增加碳水摄入（如多加糙米饭或紫薯）。",
+            "饮水充足，每天不少于1800ml。"
+          ]
+        }
+      },
+      "ts": 1766328759
+    },
+    {
+      "type": "Plan",
+      "props": {
+        "plan_type": "训练+饮食规划",
+        "workout_plan": {
+          "schedule": "每周3次，单次约60分钟",
+          "notes": [
+            "每次训练包含热身、复合动作、孤立动作和拉伸。",
+            "规避腰部和颈部压力过大的动作，所有动作保持核心收紧，避免代偿。",
+            "如有不适，及时调整或停止相关动作。"
+          ],
+          "sessions": [
+            {
+              "name": "全身训练A",
+              "duration_min": 60,
+              "notes": [
+                "重点激活大肌群，兼顾上肢、下肢和核心。",
+                "规避腰部和颈部高负荷动作。"
+              ],
+              "items": [
+                {
+                  "exercise": "动态热身（椭圆机快走/肩部环绕/髋部激活）",
+                  "sets": 1,
+                  "reps": "5-8min",
+                  "rest_sec": 0,
+                  "intensity": "低",
+                  "notes": [
+                    "激活全身，预防受伤。"
+                  ]
+                },
+                {
+                  "exercise": "Seated Rear Delt Row (Lever)",
+                  "sets": 3,
+                  "reps": "12-15",
+                  "rest_sec": 60,
+                  "intensity": "中等",
+                  "notes": [
+                    "肩后束，Lever器械，保护颈部和腰部。"
+                  ]
+                },
+                {
+                  "exercise": "Single Leg Split Squat (Barbell)",
+                  "sets": 3,
+                  "reps": "10-12/腿",
+                  "rest_sec": 90,
+                  "intensity": "中等",
+                  "notes": [
+                    "股四头肌，杠铃，单腿动作减少腰部压力。"
+                  ]
+                },
+                {
+                  "exercise": "Straight Hip Leg Curl (on ball)",
+                  "sets": 3,
+                  "reps": "12-15",
+                  "rest_sec": 60,
+                  "intensity": "中等",
+                  "notes": [
+                    "腘绳肌，自身体重，保护腰部。"
+                  ]
+                },
+                {
+                  "exercise": "with rope (Cable) - 侧三角",
+                  "sets": 3,
+                  "reps": "12-15",
+                  "rest_sec": 60,
+                  "intensity": "中等",
+                  "notes": [
+                    "Cable器械，侧三角，低风险。"
+                  ]
+                },
+                {
+                  "exercise": "静态拉伸（下肢、肩部）",
+                  "sets": 1,
+                  "reps": "5-10min",
+                  "rest_sec": 0,
+                  "intensity": "低",
+                  "notes": [
+                    "训练结束后，重点拉伸下肢和肩部。"
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "全身训练B",
+              "duration_min": 60,
+              "notes": [
+                "动作组合与A略有不同，继续规避腰部和颈部高风险动作。"
+              ],
+              "items": [
+                {
+                  "exercise": "动态热身（椭圆机快走/肩部环绕/髋部激活）",
+                  "sets": 1,
+                  "reps": "5-8min",
+                  "rest_sec": 0,
+                  "intensity": "低",
+                  "notes": [
+                    "激活全身，预防受伤。"
+                  ]
+                },
+                {
+                  "exercise": "Dumbbell Floor Press",
+                  "sets": 3,
+                  "reps": "10-12",
+                  "rest_sec": 90,
+                  "intensity": "中等",
+                  "notes": [
+                    "胸部，哑铃，地板卧推减少腰部压力。"
+                  ]
+                },
+                {
+                  "exercise": "Dumbbell Lateral Raise",
+                  "sets": 3,
+                  "reps": "12-15",
+                  "rest_sec": 60,
+                  "intensity": "中等",
+                  "notes": [
+                    "侧三角，哑铃，低风险。"
+                  ]
+                },
+                {
+                  "exercise": "Cable Seated Row",
+                  "sets": 3,
+                  "reps": "12-15",
+                  "rest_sec": 90,
+                  "intensity": "中等",
+                  "notes": [
+                    "背部，Cable，坐姿减少腰部压力。"
+                  ]
+                },
+                {
+                  "exercise": "Dumbbell Step Up",
+                  "sets": 3,
+                  "reps": "10-12/腿",
+                  "rest_sec": 90,
+                  "intensity": "中等",
+                  "notes": [
+                    "下肢，哑铃，单腿动作，低腰部风险。"
+                  ]
+                },
+                {
+                  "exercise": "静态拉伸（胸部、背部、下肢）",
+                  "sets": 1,
+                  "reps": "5-10min",
+                  "rest_sec": 0,
+                  "intensity": "低",
+                  "notes": [
+                    "训练结束后，重点拉伸胸部、背部和下肢。"
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "全身训练C",
+              "duration_min": 60,
+              "notes": [
+                "继续采用安全动作，补充核心训练（低腰部负担）。"
+              ],
+              "items": [
+                {
+                  "exercise": "动态热身（椭圆机快走/肩部环绕/髋部激活）",
+                  "sets": 1,
+                  "reps": "5-8min",
+                  "rest_sec": 0,
+                  "intensity": "低",
+                  "notes": [
+                    "激活全身，预防受伤。"
+                  ]
+                },
+                {
+                  "exercise": "Cable Triceps Pushdown",
+                  "sets": 3,
+                  "reps": "12-15",
+                  "rest_sec": 60,
+                  "intensity": "中等",
+                  "notes": [
+                    "肱三头肌，Cable，低风险。"
+                  ]
+                },
+                {
+                  "exercise": "Dumbbell Hammer Curl",
+                  "sets": 3,
+                  "reps": "12-15",
+                  "rest_sec": 60,
+                  "intensity": "中等",
+                  "notes": [
+                    "肱二头肌，哑铃，低风险。"
+                  ]
+                },
+                {
+                  "exercise": "Lever Leg Extension",
+                  "sets": 3,
+                  "reps": "12-15",
+                  "rest_sec": 60,
+                  "intensity": "中等",
+                  "notes": [
+                    "股四头肌，Lever器械，低腰部风险。"
+                  ]
+                },
+                {
+                  "exercise": "Bird Dog",
+                  "sets": 3,
+                  "reps": "12-15/侧",
+                  "rest_sec": 60,
+                  "intensity": "低-中",
+                  "notes": [
+                    "核心训练，保护腰部，适合腰部有伤者。"
+                  ]
+                },
+                {
+                  "exercise": "静态拉伸（手臂、腿部、核心）",
+                  "sets": 1,
+                  "reps": "5-10min",
+                  "rest_sec": 0,
+                  "intensity": "低",
+                  "notes": [
+                    "训练结束后，重点拉伸手臂、腿部和核心。"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "diet_plan": {
+          "macro_target": {
+            "kcal": 1700,
+            "protein_g": 120,
+            "carb_g": 160,
+            "fat_g": 45
+          },
+          "meal_templates": [
+            {
+              "name": "早餐",
+              "items": [
+                "鸡蛋2个",
+                "全麦面包2片",
+                "低脂牛奶250ml",
+                "水果（如苹果/香蕉）1份"
+              ],
+              "notes": [
+                "高蛋白，适量碳水，避免香菜。"
+              ]
+            },
+            {
+              "name": "午餐",
+              "items": [
+                "鸡胸肉/鱼肉150g",
+                "糙米/藜麦100g",
+                "西兰花/胡萝卜/番茄等蔬菜200g",
+                "橄榄油1勺"
+              ],
+              "notes": [
+                "高蛋白，低脂，丰富蔬菜，避免香菜。"
+              ]
+            },
+            {
+              "name": "晚餐",
+              "items": [
+                "豆腐/鸡蛋/鱼肉100g",
+                "杂粮饭80g",
+                "菠菜/蘑菇/西葫芦等蔬菜150g"
+              ],
+              "notes": [
+                "清淡易消化，避免香菜。"
+              ]
+            }
+          ],
+          "notes": [
+            "三餐均衡分配蛋白质和碳水，控制脂肪摄入。",
+            "避免香菜，蔬菜可多样化选择。",
+            "如有饥饿可适量加餐：低脂酸奶、坚果（少量）、水果。",
+            "饮水充足，每天不少于1800ml。"
+          ]
+        }
+      },
+      "ts": 1766330277
+    },
+    {
+      "type": "WorkoutLog",
+      "props": {
+        "summary": "完成计划打卡: 全身训练A",
+        "plan_id": "current_active",
+        "automatic_log": true
+      },
+      "ts": 1766334160
+    },
+    {
+      "type": "Plan",
+      "props": {
+        "plan_type": "训练+饮食规划",
+        "workout_plan": {
+          "schedule": "每周3次，每次约60分钟，建议间隔1天休息",
+          "notes": [
+            "所有动作已过滤腰部和颈部伤病风险，适合初中级水平减脂目标。",
+            "如有不适请及时调整或咨询专业人士。"
+          ],
+          "sessions": [
+            {
+              "name": "全身训练A",
+              "duration_min": 60,
+              "items": [
+                {
+                  "exercise": "动态热身（椭圆机/动态拉伸）",
+                  "sets": 1,
+                  "reps": "5-10分钟",
+                  "intensity": "轻度",
+                  "rest_sec": 0,
+                  "notes": [
+                    "激活全身，重点活动髋、膝、肩"
+                  ]
+                },
+                {
+                  "exercise": "Barbell Romanian Deadlift",
+                  "sets": 3,
+                  "reps": "10-12",
+                  "intensity": "中等重量，动作控制，避免腰部代偿",
+                  "rest_sec": 90,
+                  "notes": [
+                    "保持背部中立，避免腰部过度弯曲"
+                  ]
+                },
+                {
+                  "exercise": "Dumbbell Split Squat",
+                  "sets": 3,
+                  "reps": "10-12/腿",
+                  "intensity": "中等重量，动作缓慢",
+                  "rest_sec": 90,
+                  "notes": [
+                    "核心收紧，避免腰部压力"
+                  ]
+                },
+                {
+                  "exercise": "Cable Face Pull",
+                  "sets": 3,
+                  "reps": "12-15",
+                  "intensity": "轻中等重量，专注后束收缩",
+                  "rest_sec": 60,
+                  "notes": [
+                    "有助于改善肩颈稳定性"
+                  ]
+                },
+                {
+                  "exercise": "Lever Seated Row",
+                  "sets": 3,
+                  "reps": "10-12",
+                  "intensity": "中等重量，控制动作",
+                  "rest_sec": 90,
+                  "notes": [
+                    "避免耸肩，收紧背部"
+                  ]
+                },
+                {
+                  "exercise": "拉伸（下肢、背部、肩部）",
+                  "sets": 1,
+                  "reps": "5-10分钟",
+                  "intensity": "轻度",
+                  "rest_sec": 0,
+                  "notes": [
+                    "重点拉伸腘绳肌、臀部、股四头肌、背部"
+                  ]
+                }
+              ],
+              "notes": [
+                "训练顺序：热身→复合腿部→复合上肢→孤立→拉伸"
+              ]
+            },
+            {
+              "name": "全身训练B",
+              "duration_min": 60,
+              "items": [
+                {
+                  "exercise": "动态热身（椭圆机/动态拉伸）",
+                  "sets": 1,
+                  "reps": "5-10分钟",
+                  "intensity": "轻度",
+                  "rest_sec": 0,
+                  "notes": [
+                    "激活全身，重点活动髋、膝、肩"
+                  ]
+                },
+                {
+                  "exercise": "Barbell Romanian Deadlift",
+                  "sets": 3,
+                  "reps": "10-12",
+                  "intensity": "中等重量，动作控制，避免腰部代偿",
+                  "rest_sec": 90,
+                  "notes": [
+                    "保持背部中立，避免腰部过度弯曲"
+                  ]
+                },
+                {
+                  "exercise": "Dumbbell Split Squat",
+                  "sets": 3,
+                  "reps": "10-12/腿",
+                  "intensity": "中等重量，动作缓慢",
+                  "rest_sec": 90,
+                  "notes": [
+                    "核心收紧，避免腰部压力"
+                  ]
+                },
+                {
+                  "exercise": "Dumbbell Chest Press",
+                  "sets": 3,
+                  "reps": "10-12",
+                  "intensity": "中等重量，动作缓慢",
+                  "rest_sec": 90,
+                  "notes": [
+                    "颈部保持放松，避免耸肩"
+                  ]
+                },
+                {
+                  "exercise": "Cable Face Pull",
+                  "sets": 3,
+                  "reps": "12-15",
+                  "intensity": "轻中等重量，专注后束收缩",
+                  "rest_sec": 60,
+                  "notes": [
+                    "有助于改善肩颈稳定性"
+                  ]
+                },
+                {
+                  "exercise": "拉伸（下肢、背部、肩部）",
+                  "sets": 1,
+                  "reps": "5-10分钟",
+                  "intensity": "轻度",
+                  "rest_sec": 0,
+                  "notes": [
+                    "重点拉伸腘绳肌、臀部、股四头肌、背部"
+                  ]
+                }
+              ],
+              "notes": [
+                "训练顺序：热身→复合腿部→复合上肢→孤立→拉伸"
+              ]
+            },
+            {
+              "name": "全身训练C",
+              "duration_min": 60,
+              "items": [
+                {
+                  "exercise": "动态热身（椭圆机/动态拉伸）",
+                  "sets": 1,
+                  "reps": "5-10分钟",
+                  "intensity": "轻度",
+                  "rest_sec": 0,
+                  "notes": [
+                    "激活全身，重点活动髋、膝、肩"
+                  ]
+                },
+                {
+                  "exercise": "Dumbbell Split Squat",
+                  "sets": 3,
+                  "reps": "10-12/腿",
+                  "intensity": "中等重量，动作缓慢",
+                  "rest_sec": 90,
+                  "notes": [
+                    "核心收紧，避免腰部压力"
+                  ]
+                },
+                {
+                  "exercise": "Barbell Romanian Deadlift",
+                  "sets": 3,
+                  "reps": "10-12",
+                  "intensity": "中等重量，动作控制，避免腰部代偿",
+                  "rest_sec": 90,
+                  "notes": [
+                    "保持背部中立，避免腰部过度弯曲"
+                  ]
+                },
+                {
+                  "exercise": "Lever Seated Row",
+                  "sets": 3,
+                  "reps": "10-12",
+                  "intensity": "中等重量，控制动作",
+                  "rest_sec": 90,
+                  "notes": [
+                    "避免耸肩，收紧背部"
+                  ]
+                },
+                {
+                  "exercise": "Cable Face Pull",
+                  "sets": 3,
+                  "reps": "12-15",
+                  "intensity": "轻中等重量，专注后束收缩",
+                  "rest_sec": 60,
+                  "notes": [
+                    "有助于改善肩颈稳定性"
+                  ]
+                },
+                {
+                  "exercise": "拉伸（下肢、背部、肩部）",
+                  "sets": 1,
+                  "reps": "5-10分钟",
+                  "intensity": "轻度",
+                  "rest_sec": 0,
+                  "notes": [
+                    "重点拉伸腘绳肌、臀部、股四头肌、背部"
+                  ]
+                }
+              ],
+              "notes": [
+                "训练顺序：热身→复合腿部→复合上肢→孤立→拉伸"
+              ]
+            }
+          ]
+        },
+        "diet_plan": {
+          "macro_target": {
+            "kcal": 1700,
+            "protein_g": 120,
+            "carb_g": 160,
+            "fat_g": 50
+          },
+          "meal_templates": [
+            {
+              "name": "早餐",
+              "items": [
+                "燕麦粥（燕麦+牛奶/豆奶）",
+                "水煮蛋",
+                "水果（如苹果、香蕉）"
+              ],
+              "notes": [
+                "高蛋白，低脂肪，避免香菜"
+              ]
+            },
+            {
+              "name": "午餐",
+              "items": [
+                "糙米饭",
+                "清蒸鱼或鸡胸肉",
+                "炒西兰花、胡萝卜（不加香菜）"
+              ],
+              "notes": [
+                "优质蛋白，低油，蔬菜多样"
+              ]
+            },
+            {
+              "name": "晚餐",
+              "items": [
+                "藜麦/糙米",
+                "煎豆腐或鸡胸肉",
+                "凉拌黄瓜、番茄（不加香菜）"
+              ],
+              "notes": [
+                "低碳水，高蛋白，避免香菜"
+              ]
+            },
+            {
+              "name": "加餐/训练后",
+              "items": [
+                "低脂酸奶",
+                "蛋白粉冲饮"
+              ],
+              "notes": [
+                "补充蛋白，促进恢复"
+              ]
+            }
+          ],
+          "notes": [
+            "每日饮食避免香菜，控制油盐摄入。",
+            "蛋白质摄入充足，碳水适量，脂肪偏低以利于减脂。",
+            "如有饥饿可适量增加蔬菜或蛋白质食物。"
+          ]
+        }
+      },
+      "ts": 1766334309
+    },
+    {
+      "type": "Plan",
+      "props": {
+        "plan_type": "训练+饮食规划",
+        "workout_plan": {
+          "notes": [
+            "本计划优先采用已过滤伤病风险和设备匹配的推荐动作，适合腰部和颈部有伤病史的初中级减脂用户。",
+            "每周训练3次，每次约60分钟，建议间隔1天休息。",
+            "每次训练包含动态热身、正式训练、拉伸，组间休息60-90秒。"
+          ],
+          "schedule": "周一、三、五或间隔1天休息",
+          "sessions": [
+            {
+              "name": "全身训练A",
+              "notes": [
+                "重点激活腿部、背部、肩部和核心，避免高风险动作。"
+              ],
+              "duration_min": 60,
+              "items": [
+                {
+                  "exercise": "动态热身（椭圆机/动态拉伸）",
+                  "sets": 1,
+                  "reps": "8-10分钟",
+                  "rest_sec": 0,
+                  "intensity": "低",
+                  "notes": [
+                    "提升心率，激活全身肌群。"
+                  ]
+                },
+                {
+                  "exercise": "Barbell Romanian Deadlift",
+                  "sets": 3,
+                  "reps": "10-12",
+                  "rest_sec": 90,
+                  "intensity": "中",
+                  "notes": [
+                    "保持背部中立，避免腰部过度负荷。"
+                  ]
+                },
+                {
+                  "exercise": "Dumbbell Split Squat",
+                  "sets": 3,
+                  "reps": "10-12/腿",
+                  "rest_sec": 90,
+                  "intensity": "中",
+                  "notes": [
+                    "核心收紧，注意膝盖方向。"
+                  ]
+                },
+                {
+                  "exercise": "Lever Seated Row",
+                  "sets": 3,
+                  "reps": "12-15",
+                  "rest_sec": 60,
+                  "intensity": "中",
+                  "notes": [
+                    "收紧肩胛骨，避免耸肩。"
+                  ]
+                },
+                {
+                  "exercise": "Cable Face Pull",
+                  "sets": 3,
+                  "reps": "15",
+                  "rest_sec": 60,
+                  "intensity": "中",
+                  "notes": [
+                    "改善肩部稳定性，保护颈部。"
+                  ]
+                },
+                {
+                  "exercise": "Plank",
+                  "sets": 3,
+                  "reps": "30-45秒",
+                  "rest_sec": 45,
+                  "intensity": "中",
+                  "notes": [
+                    "强化核心，保持身体一条直线，避免塌腰。"
+                  ]
+                },
+                {
+                  "exercise": "拉伸",
+                  "sets": 1,
+                  "reps": "8-10分钟",
+                  "rest_sec": 0,
+                  "intensity": "低",
+                  "notes": [
+                    "全身拉伸，重点腿部、背部和肩部。"
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "全身训练B",
+              "notes": [
+                "更侧重胸部、核心和下肢，继续规避腰颈高风险动作。"
+              ],
+              "duration_min": 60,
+              "items": [
+                {
+                  "exercise": "动态热身（椭圆机/动态拉伸）",
+                  "sets": 1,
+                  "reps": "8-10分钟",
+                  "rest_sec": 0,
+                  "intensity": "低",
+                  "notes": [
+                    "提升心率，激活全身肌群。"
+                  ]
+                },
+                {
+                  "exercise": "Dumbbell Chest Press",
+                  "sets": 3,
+                  "reps": "10-12",
+                  "rest_sec": 90,
+                  "intensity": "中",
+                  "notes": [
+                    "肩胛骨收紧，避免颈部用力。"
+                  ]
+                },
+                {
+                  "exercise": "Dumbbell Split Squat",
+                  "sets": 3,
+                  "reps": "10-12/腿",
+                  "rest_sec": 90,
+                  "intensity": "中",
+                  "notes": [
+                    "核心收紧，注意膝盖方向。"
+                  ]
+                },
+                {
+                  "exercise": "Lever Seated Row",
+                  "sets": 3,
+                  "reps": "12-15",
+                  "rest_sec": 60,
+                  "intensity": "中",
+                  "notes": [
+                    "收紧肩胛骨，避免耸肩。"
+                  ]
+                },
+                {
+                  "exercise": "Cable Face Pull",
+                  "sets": 3,
+                  "reps": "15",
+                  "rest_sec": 60,
+                  "intensity": "中",
+                  "notes": [
+                    "改善肩部稳定性，保护颈部。"
+                  ]
+                },
+                {
+                  "exercise": "Dead Bug",
+                  "sets": 3,
+                  "reps": "10-12/侧",
+                  "rest_sec": 45,
+                  "intensity": "中",
+                  "notes": [
+                    "动作缓慢，腰部贴地，强化核心。"
+                  ]
+                },
+                {
+                  "exercise": "拉伸",
+                  "sets": 1,
+                  "reps": "8-10分钟",
+                  "rest_sec": 0,
+                  "intensity": "低",
+                  "notes": [
+                    "全身拉伸，重点胸部、肩部和核心。"
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "全身训练C",
+              "notes": [
+                "综合强化全身，动作与A/B略有交替，保持安全。"
+              ],
+              "duration_min": 60,
+              "items": [
+                {
+                  "exercise": "动态热身（椭圆机/动态拉伸）",
+                  "sets": 1,
+                  "reps": "8-10分钟",
+                  "rest_sec": 0,
+                  "intensity": "低",
+                  "notes": [
+                    "提升心率，激活全身肌群。"
+                  ]
+                },
+                {
+                  "exercise": "Barbell Romanian Deadlift",
+                  "sets": 3,
+                  "reps": "10-12",
+                  "rest_sec": 90,
+                  "intensity": "中",
+                  "notes": [
+                    "保持背部中立，避免腰部过度负荷。"
+                  ]
+                },
+                {
+                  "exercise": "Dumbbell Chest Press",
+                  "sets": 3,
+                  "reps": "10-12",
+                  "rest_sec": 90,
+                  "intensity": "中",
+                  "notes": [
+                    "肩胛骨收紧，避免颈部用力。"
+                  ]
+                },
+                {
+                  "exercise": "Dumbbell Split Squat",
+                  "sets": 3,
+                  "reps": "10-12/腿",
+                  "rest_sec": 90,
+                  "intensity": "中",
+                  "notes": [
+                    "核心收紧，注意膝盖方向。"
+                  ]
+                },
+                {
+                  "exercise": "Cable Face Pull",
+                  "sets": 3,
+                  "reps": "15",
+                  "rest_sec": 60,
+                  "intensity": "中",
+                  "notes": [
+                    "改善肩部稳定性，保护颈部。"
+                  ]
+                },
+                {
+                  "exercise": "Bird Dog",
+                  "sets": 3,
+                  "reps": "10-12/侧",
+                  "rest_sec": 45,
+                  "intensity": "中",
+                  "notes": [
+                    "动作缓慢，保持核心稳定，避免腰部旋转。"
+                  ]
+                },
+                {
+                  "exercise": "拉伸",
+                  "sets": 1,
+                  "reps": "8-10分钟",
+                  "rest_sec": 0,
+                  "intensity": "低",
+                  "notes": [
+                    "全身拉伸，重点腿部、胸部和肩部。"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "diet_plan": {
+          "macro_target": {
+            "kcal": 1700,
+            "protein_g": 120,
+            "carb_g": 180,
+            "fat_g": 45
+          },
+          "meal_templates": [
+            {
+              "name": "早餐",
+              "items": [
+                "燕麦粥（燕麦+牛奶/豆奶）",
+                "水煮蛋",
+                "水果（如苹果、香蕉）"
+              ],
+              "notes": [
+                "高纤维、优质蛋白，低脂肪。"
+              ]
+            },
+            {
+              "name": "午餐",
+              "items": [
+                "糙米饭",
+                "清蒸鱼或鸡胸肉",
+                "炒西兰花、胡萝卜（不加香菜）"
+              ],
+              "notes": [
+                "高蛋白、低脂肪，蔬菜丰富。"
+              ]
+            },
+            {
+              "name": "晚餐",
+              "items": [
+                "煎豆腐或鸡胸肉",
+                "凉拌黄瓜、番茄（不加香菜）",
+                "低脂酸奶"
+              ],
+              "notes": [
+                "蛋白充足，清淡易消化。"
+              ]
+            }
+          ],
+          "notes": [
+            "每日蛋白摄入建议分配到三餐，必要时可补充蛋白粉。",
+            "避免香菜，控制油脂摄入，优先选择蒸、煮、拌等低油烹饪方式。",
+            "如训练后饥饿，可适量加餐低脂酸奶或蛋白粉。"
+          ]
+        }
+      },
+      "ts": 1766366680
+    },
+    {
+      "type": "WorkoutLog",
+      "props": {
+        "summary": "完成 Seated",
+        "exercise_id": "Seated__Should__Barbell__Deltoid, Anterior",
+        "body_part": "Should",
+        "target_muscles": [
+          "Deltoid, Anterior"
+        ],
+        "plan_id": "current_active",
+        "automatic_log": true
+      },
+      "ts": 1766366754
+    },
+    {
+      "type": "WorkoutLog",
+      "props": {
+        "summary": "完成 Y Raise",
+        "exercise_id": "Y Raise__Should__Cable__Deltoid, Lateral",
+        "body_part": "Should",
+        "target_muscles": [
+          "Deltoid, Lateral"
+        ],
+        "plan_id": "current_active",
+        "automatic_log": true
+      },
+      "ts": 1766366754
     }
   ]
 }

@@ -70,15 +70,21 @@ def _extract_search_criteria(user_text: str) -> dict:
     """提取运动搜索关键词"""
     valid_parts_str = ", ".join(VALID_BODY_PARTS)
     sys_prompt = (
-        f"You are a query parser for an exercise database. "
-        f"The database only accepts these specific body parts: [{valid_parts_str}].\n"
+        f"You are a query parser for an exercise database.\n"
+        f"The database only accepts these specific body parts: [{valid_parts_str}].\n\n"
         "Your task:\n"
         "1. Identify the target body part from user input and map it to ONE of the valid parts above. "
         "(e.g., 'Legs' -> 'Thigh' or 'Calf'; 'Abs' -> 'Waist').\n"
         "2. Identify specific exercise names (keywords_include).\n"
-        "3. Identify negative constraints (keywords_exclude).\n"
-        "Output JSON."
+        "3. Identify negative constraints (keywords_exclude).\n\n"
+        "Output strictly in the following JSON format:\n"
+        "{\n"
+        '  "target_part": "",\n'
+        '  "keywords_include": [],\n'
+        '  "keywords_exclude": []\n'
+        "}"
     )
+
     try:
         resp = chat(instruction=sys_prompt, user_message=user_text, response_format={"type": "json_object"})
         return json.loads(resp)
@@ -187,8 +193,9 @@ def subflow_faq_exercise(state: Dict[str, Any], exercise_kg: Dict[str, Any]) -> 
     """升级版 FAQ: 智能设备感知"""
     user_input = state["user_input"]
     mem_sum = state.get("memory_summary", {})
+    print(mem_sum)
     user_injuries = mem_sum.get("special", {}).get("injuries_active", [])
-    
+    print(user_injuries)
     user_equip = (mem_sum.get("constraints", {}).get("equipment") or 
                   mem_sum.get("preferences", {}).get("equipment") or [])
     
@@ -213,7 +220,7 @@ def subflow_faq_exercise(state: Dict[str, Any], exercise_kg: Dict[str, Any]) -> 
         try:
             tool_args = {
                 "target_body_part": target_part,
-                "injury_body_part": user_injuries[0] if user_injuries else None,
+                "injury_body_part": user_injuries if user_injuries else [],
                 "available_equipment": current_equip_context,
                 "history": workout_history,
                 "topk": 5
@@ -225,6 +232,7 @@ def subflow_faq_exercise(state: Dict[str, Any], exercise_kg: Dict[str, Any]) -> 
             else:
                 evid = recs
             
+            print(evid)
             if equip_warning and evid:
                 evid.insert(0, {
                     "source": "SYSTEM_NOTE",
@@ -476,7 +484,7 @@ def subflow_plan_full(state: Dict[str, Any], trace: list,
     # 这里我们只保留 Exercise 的补充检索，因为 Diet Recommender 是一次性生成全餐，不需要按词检索
     # 如果 LLM 觉得还需要查某些食材的具体信息，可以由 KnowledgeRetriever 发起 query
     
-    kout1 = run_agent("KnowledgeRetriever#1", KNOWLEDGE_RETRIEVER_SYS, state, trace, response_format=KNOWLEDGE_RETRIEVER_RESPONSE_FORMAT)
+    # kout1 = run_agent("KnowledgeRetriever#1", KNOWLEDGE_RETRIEVER_SYS, state, trace, response_format=KNOWLEDGE_RETRIEVER_RESPONSE_FORMAT)
     # ... (KnowledgeRetriever loop logic same as before) ...
     
     # 5. 推理决策
@@ -556,29 +564,59 @@ def subflow_log_update(state: Dict[str, Any], trace: list) -> Dict[str, Any]:
     state["user_memory_graph_updated"] = updated
     return state
 
-def _simple_neo4j_search(target_part: str, excludes: list = None):
+def _simple_neo4j_search(
+    target_part: str,
+    exercise_text: str = None,
+    excludes: list = None,
+    limit: int = 5
+):
+    """
+    正确逻辑：
+    1. target_part 作为硬约束（TrainingBodyPart）
+    2. exercise_text 作为模糊匹配（name / muscle）
+    """
     from tools.exercise_tools.query import ExerciseKGQuery
+    from core.config import get_cfg
+
     cfg = get_cfg()
-    if excludes is None: excludes = []
-    kg = ExerciseKGQuery(cfg["neo4j_uri"], (cfg["neo4j_user"], cfg["neo4j_password"]))
+    if excludes is None:
+        excludes = []
+
+    kg = ExerciseKGQuery(
+        cfg["neo4j_uri"],
+        (cfg["neo4j_user"], cfg["neo4j_password"])
+    )
+
     try:
-        results = kg.search_exercises(keyword=target_part, excludes=excludes, limit=5)
+        results = kg.search_exercises(
+            target_part=target_part,
+            exercise_text=exercise_text,
+            excludes=excludes,
+            limit=limit
+        )
     except Exception as e:
         print(f"[Neo4j Error] {e}")
         return []
     finally:
         kg.close()
-    
+
     evidences = []
     for r in results:
         evidences.append({
             "evidence_id": r.get("id"),
             "name": r.get("name"),
             "summary": (r.get("instructions") or "")[:200] + "...",
-            "fields": {"utility": r.get("utility"), "mechanics": r.get("mechanics")},
+            "fields": {
+                "utility": r.get("utility"),
+                "mechanics": r.get("mechanics")
+            },
+            "body_part": r.get("body_part", ""),
+            "target_muscles": r.get("target_muscles", []),
             "source": "Neo4j_Search"
         })
+
     return evidences
+
 
 # agents/subflows.py -> _simple_diet_search
 
@@ -620,138 +658,181 @@ def _simple_diet_search(keyword: str, top_k: int = 5) -> List[Dict]:
         if hasattr(kg, "close"):
             kg.close()
 # [Import needed] 确保引入了新定义的 Prompt 和 Schema
-from agents.prompts import DIET_LOGGER_SYS
-from agents.schemas import DIET_LOGGER_RESPONSE_FORMAT
+from agents.prompts import DIET_LOGGER_SYS,LOG_INTENT_ANALYZER_SYS
+from agents.schemas import DIET_LOGGER_RESPONSE_FORMAT,LOG_INTENT_ANALYZER_RESPONSE_FORMAT
 
-def subflow_log_update(state: Dict[str, Any], trace: list, chat_history: list = None) -> Dict[str, Any]:
+def subflow_log_update(
+    state: Dict[str, Any],
+    trace: list,
+    chat_history: list = None
+) -> Dict[str, Any]:
     """
-    智能饮食/运动记录流程 (完全体: Context + EN-Translation + KG Search + Direct Write)
+    Final Version:
+    - LLM only analyzes behavior intent
+    - KG determines factual entities
+    - WorkoutLog / DietLog strictly separated
     """
-    if chat_history is None: chat_history = []
+    if chat_history is None:
+        chat_history = []
+
     user_input = state["user_input"]
-    
-    # === 1. 构建上下文 (Context Stitching) ===
+
+    # ============================================================
+    # 1. Context Stitching
+    # ============================================================
     context_msgs = []
     for msg in reversed(chat_history):
         role = "User" if msg["role"] == "user" else "Assistant"
-        content = msg["content"]
-        context_msgs.append(f"{role}: {content}")
-        if len(context_msgs) >= 3: 
+        context_msgs.append(f"{role}: {msg['content']}")
+        if len(context_msgs) >= 3:
             break
-    
+
     context_summary = "\n".join(reversed(context_msgs))
-    full_input_context = f"{context_summary}\nUser (Current): {user_input}"
-    
-    print(f"[LogUpdate] Context:\n{full_input_context}")
+    full_context = f"{context_summary}\nUser (Current): {user_input}"
 
-    # === 2. 意图与实体提取 ===
-    # 临时调用 IntentParser 提取中文实体
+    print(f"[LogUpdate] Context:\n{full_context}")
+
+    # ============================================================
+    # 2. LLM: Log Intent Analyzer
+    # ============================================================
     temp_state = state.copy()
-    temp_state["user_input"] = full_input_context 
-    
-    parsed_frame = run_agent("IntentParser", INTENT_PARSER_SYS, temp_state, trace, response_format=INTENT_PARSER_RESPONSE_FORMAT)
-    foods_cn = parsed_frame.get("entities", {}).get("foods", [])
-    
-    # 意图判断
-    has_diet_kw = any(kw in user_input for kw in ["吃", "喝", "餐", "饭", "饮", "食", "肉", "菜"])
-    last_assistant_msg = chat_history[-1]["content"] if chat_history and chat_history[-1]["role"] == "assistant" else ""
-    is_answering_clarification = any(q in last_assistant_msg for q in ["多少", "重量", "分量", "什么"])
-    is_diet_log = has_diet_kw or is_answering_clarification or foods_cn
+    temp_state["user_input"] = full_context
 
-    if not is_diet_log and any(kw in user_input for kw in ["练", "跑", "蹲", "举"]):
-        raw_updater_out = run_agent("MemoryUpdater", MEMORY_UPDATER_SYS, state, trace, response_format=MEMORY_UPDATER_RESPONSE_FORMAT)
-        state["memory_patch"] = _extract_patch_ops(raw_updater_out)
-        state["user_memory_graph_updated"] = apply_patch(state["user_memory_graph"], state["memory_patch"])
-        state["decision"] = {"response": "已记录您的动态。"} 
+    intent_out = run_agent(
+        "LogIntentAnalyzer",
+        LOG_INTENT_ANALYZER_SYS,
+        temp_state,
+        trace,
+        response_format=LOG_INTENT_ANALYZER_RESPONSE_FORMAT
+    )
+
+    events = intent_out.get("events", [])
+    if not events:
+        state["decision"] = {"response": "我暂时没有检测到需要记录的行为。"}
         return state
 
-    # === 3. 检索 KG (Translation + Search) ===
-    kg_context_text = ""
-    
-    if foods_cn:
-        # ★★★ 新增：中译英 ★★★
-        print(f"[LogUpdate] Translating foods: {foods_cn} ...")
-        foods_en = _translate_keywords(foods_cn)
-        print(f"[LogUpdate] Search keywords (EN): {foods_en}")
+    patch_ops = []
 
-        unique_foods = list(set(foods_en))
-        for f in unique_foods:
-            # 使用英文关键词查库
-            recs = _simple_diet_search(f, top_k=3)
-            if recs:
-                for r in recs:
-                    summary = r.get('summary', 'No details')
-                    fields = r.get('fields', {})
-                    # 构造 Context (注明这是英文库查到的结果)
-                    kg_context_text += (
-                        f"- 【KG Match】{r['name']}: {summary}\n"
-                        f"  (Ref: {fields})\n"
-                    )
-    
-    if not kg_context_text:
-        kg_context_text = "(KG Search yielded no results. Please estimate based on general nutrition knowledge.)"
-    else:
-        print(f"[LogUpdate] KG Context Injected:\n{kg_context_text}")
+    print(events)
+    # ============================================================
+    # 3. Handle Each Event
+    # ============================================================
+    for evt in events:
 
-    # === 4. 调用 DietLogger 分析 ===
-    logger_prompt = (
-        f"{DIET_LOGGER_SYS}\n\n"
-        f"### Knowledge Graph Data (From English DB)\n"
-        f"The user input is in Chinese, but matched English DB records are provided below. "
-        f"Please map them correctly (e.g. '番茄' -> 'Tomato').\n"
-        f"{kg_context_text}\n\n"
-        f"### Conversation Context\n{context_summary}\n\n"
-        f"### Current User Input\n{user_input}"
-    )
-    
-    logger_out = run_agent(
-        "DietLogger", 
-        logger_prompt, 
-        state, trace, 
-        response_format=DIET_LOGGER_RESPONSE_FORMAT
-    )
-    
-    status = logger_out.get("status")
-    feedback = logger_out.get("feedback_response")
-    
-    if status == "clarify":
-        clarify_q = logger_out.get("clarification_question", "请提供更多细节。")
-        state["decision"] = {
-            "response": f"{feedback}\n\n❓ {clarify_q}",
-            "thought": "Diet info incomplete."
-        }
-        return state
+        # --------------------------------------------------------
+        # A. Workout Event → Exercise KG → WorkoutLog
+        # --------------------------------------------------------
+        if evt["event_type"] == "workout":
+            body_part_hint = evt.get("body_part_hint")
+            exercise_text = evt.get("exercise_text")
+            if not exercise_text:
+                continue
 
-    elif status == "log":
-        log_data = logger_out.get("log_data", {})
-        
-        summary = log_data.get("summary", "饮食记录")
-        kcal = log_data.get("total_calories", 0)
-        macros = log_data.get("macros", {})
-        foods = log_data.get("foods", [])
-        meal_type = log_data.get("meal_type", "snack")
-        
-        new_event = {
-            "type": "DietLog",
-            "props": {
-                "summary": summary,
-                "description": f"包含了: {', '.join(foods)}",
-                "calories": kcal,
-                "protein": macros.get("protein", 0),
-                "carb": macros.get("carb", 0),
-                "fat": macros.get("fat", 0),
-                "meal_type": meal_type,
-                "automatic_log": True
+            try:
+                # 模糊检索 Exercise KG
+                kg_results = _simple_neo4j_search(
+                    target_part=body_part_hint,
+                    exercise_text = exercise_text,
+                    excludes=[]
+                )
+            except Exception as e:
+                print(f"[Workout KG Search Failed] {e}")
+                continue
+
+            if not kg_results:
+                continue
+
+            best = kg_results[0]
+            print(best)
+            workout_event = {
+                "type": "WorkoutLog",
+                "props": {
+                    "summary": f"完成 {best.get('name')}",
+                    "exercise_id": best.get("evidence_id"),
+                    "body_part": best.get("body_part", ""),
+                    "target_muscles": best.get("target_muscles", []),
+                    "plan_id": "current_active",
+                    "automatic_log": True
+                }
             }
-        }
-        
-        patch_ops = [{"op": "append_event", "event": new_event}]
-        state["memory_patch"] = patch_ops
-        state["user_memory_graph_updated"] = apply_patch(state["user_memory_graph"], patch_ops)
-        state["decision"]["response"] = feedback
-        
+
+            patch_ops.append({"op": "append_event", "event": workout_event})
+
+        # --------------------------------------------------------
+        # B. Diet Event → Diet KG → DietLog
+        # --------------------------------------------------------
+        elif evt["event_type"] == "diet":
+            food_texts = evt.get("food_texts") or []
+            if not food_texts:
+                continue
+
+            # 中文 → 英文
+            foods_en = _translate_keywords(food_texts)
+
+            kg_context = ""
+            for f in set(foods_en):
+                recs = _simple_diet_search(f, top_k=3)
+                for r in recs:
+                    kg_context += f"- {r['name']}: {r.get('summary', '')}\n"
+
+            if not kg_context:
+                kg_context = "(No KG matches found, estimate based on general knowledge.)"
+
+            logger_prompt = (
+                f"{DIET_LOGGER_SYS}\n\n"
+                f"### Knowledge Graph Data\n{kg_context}\n\n"
+                f"### Conversation Context\n{context_summary}\n\n"
+                f"### Current User Input\n{user_input}"
+            )
+
+            logger_out = run_agent(
+                "DietLogger",
+                logger_prompt,
+                state,
+                trace,
+                response_format=DIET_LOGGER_RESPONSE_FORMAT
+            )
+
+            if logger_out.get("status") == "clarify":
+                state["decision"] = {
+                    "response": logger_out.get("feedback_response", "请补充饮食信息。")
+                }
+                return state
+
+            log_data = logger_out.get("log_data", {})
+            if not log_data:
+                continue
+
+            diet_event = {
+                "type": "DietLog",
+                "props": {
+                    "summary": log_data.get("summary"),
+                    "description": f"包含: {', '.join(log_data.get('foods', []))}",
+                    "calories": log_data.get("total_calories", 0),
+                    "protein": log_data.get("macros", {}).get("protein", 0),
+                    "carb": log_data.get("macros", {}).get("carb", 0),
+                    "fat": log_data.get("macros", {}).get("fat", 0),
+                    "meal_type": log_data.get("meal_type", "snack"),
+                    "automatic_log": True
+                }
+            }
+
+            patch_ops.append({"op": "append_event", "event": diet_event})
+
+    # ============================================================
+    # 4. Commit Memory
+    # ============================================================
+    if not patch_ops:
+        state["decision"] = {"response": "未能生成可记录的行为日志。"}
         return state
 
+    state["memory_patch"] = patch_ops
+    state["user_memory_graph_updated"] = apply_patch(
+        state["user_memory_graph"],
+        patch_ops
+    )
+
+    state["decision"] = {"response": "✅ 已为你记录本次行为。"}
     return state
 
 

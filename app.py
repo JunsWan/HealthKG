@@ -287,39 +287,46 @@ with col_chat:
     active_diet = mem_sum.get("active_diet_plan", {})
     
     if active_diet and active_diet.get("is_active"):
-        # 使用 Expander 折叠显示，避免占据太多屏幕空间
-        with st.expander(f"🥗 **当前饮食指南** ({active_diet.get('start_date')})", expanded=False):
-            st.markdown(f"**总纲**: {active_diet.get('summary', '暂无摘要')}")
+    # 侧边栏折叠卡片
+        with st.expander(f"🥗 **当前饮食 ({active_diet.get('start_date')})**", expanded=False):
+            # 1. 显示摘要或目标
+            summary = active_diet.get("summary", "暂无摘要")
+            st.caption(f"💡 {summary[:60]}..." if len(summary)>60 else summary)
             
-            # 如果有详细的 details 结构（来自 Diet Recommender）
             details = active_diet.get("details", {})
             
-            # 情况 A: 如果是 Diet Recommender 生成的结构化数据 (list of plans)
-            if isinstance(details, list):
-                for meal in details:
-                    m_name = meal.get("meal_time", "餐食").title()
-                    m_cal = meal.get("actual_calories", 0)
-                    recipes = meal.get("recipes", [])
-                    
-                    st.markdown(f"---")
-                    st.markdown(f"**{m_name}** (约 {m_cal:.0f} kcal)")
-                    for r in recipes:
-                        r_name = r.get("recipe_name", "未知食谱")
-                        ing_list = [i.get("text") for i in r.get("ingredients", [])[:3]]
-                        st.caption(f"• {r_name} ({', '.join(ing_list)}...)")
+            # 2. 显示核心指标 (Macro)
+            macro = details.get("macro_target", {})
+            if macro:
+                # 紧凑显示：2000kcal | P:150 C:180 F:55
+                kcal = macro.get("kcal", "-")
+                p = macro.get("protein_g", "-")
+                c = macro.get("carb_g", "-")
+                f = macro.get("fat_g", "-")
+                st.markdown(f"**🔥 {kcal} kcal**")
+                st.caption(f"🥩 P:{p}g | 🍚 C:{c}g | 🥑 F:{f}g")
+                st.divider()
 
-            # 情况 B: 如果是 LLM 生成的通用 JSON (dict)
-            elif isinstance(details, dict):
-                # 尝试读取 diet_plan -> meal_templates
-                meals = details.get("meal_templates", []) or details.get("diet_plan", {}).get("meal_templates", [])
-                if meals:
-                    for m in meals:
-                        st.markdown(f"**{m.get('name', '餐')}**: {', '.join(m.get('items', []))}")
-                        if m.get("notes"):
-                            st.caption(f"注: {'; '.join(m['notes'])}")
+            # 3. 显示简易餐单 (Templates)
+            meal_templates = details.get("meal_templates", [])
+            if meal_templates:
+                for m in meal_templates:
+                    m_name = m.get("name", "餐")
+                    # 侧边栏只显示第一项食物，避免太长
+                    first_item = m.get("items", [""])[0] if m.get("items") else ""
+                    if len(m.get("items", [])) > 1:
+                        first_item += f" 等{len(m['items'])}项"
+                    
+                    st.markdown(f"**{m_name}**")
+                    if first_item:
+                        st.caption(f"• {first_item}")
+            else:
+                # 兼容旧版本或 Recommender 生成的列表结构
+                if isinstance(details, list):
+                    for m in details:
+                        st.markdown(f"**{m.get('meal_time','').title()}**")
                 else:
-                    # 兜底显示
-                    st.write(details)
+                    st.caption("暂无结构化菜单")
 
     # ============================================================
     # 原有的聊天记录渲染
@@ -349,12 +356,14 @@ with col_chat:
         with c1:
             if st.button("✅ 采纳此计划", type="primary", key="btn_accept_main"):
                 with st.spinner("正在写入记忆..."):
+                    print(plan_data)
                     final_state = subflow_commit_plan(
                         plan_data["state"], 
                         plan_data["trace"], 
                         plan_data["text"],
                         task_frame=plan_data.get("task_frame")
                     )
+                print(final_state['user_memory_graph_updated'])
                 if "user_memory_graph_updated" in final_state:
                     st.session_state.user_memory_graph = final_state["user_memory_graph_updated"]
                     save_graph(PATH_USER, final_state["user_memory_graph_updated"])

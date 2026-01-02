@@ -77,16 +77,53 @@ def ingredient_score(recipe, user):
     return score
 
 
-def history_penalty(recipe_names, history):
+def history_penalty(candidate_names: List[str], history: List[Dict[str, Any]]) -> float:
+    """
+    [Fixed] 适配 Graph Event 结构的历史惩罚计算
+    history: list of events (from Neo4j graph)
+    candidate_names: list of recipe names (from KG candidates)
+    """
     now = datetime.now()
     penalty = 0.0
+    
+    # 预处理 candidates 为小写，加速匹配
+    candidates_lower = [n.lower() for n in candidate_names if n]
 
     for h in history:
-        if h["recipe_name"] not in recipe_names:
+        # 1. 过滤非饮食事件
+        if h.get("type") not in ["DietLog", "MealLog"]:
             continue
-        t = datetime.fromisoformat(h["timestamp"])
-        days = (now - t).days
-        penalty += 1.0 / max(days + 1, 1)
+            
+        # 2. 解析时间 (Unix Timestamp)
+        ts = h.get("ts", 0)
+        try:
+            log_time = datetime.fromtimestamp(ts)
+        except:
+            continue
+            
+        days = (now - log_time).days
+        
+        # 优化：只惩罚最近 7 天的重复，太久的无所谓
+        if days > 7:
+            continue
+
+        # 3. 提取日志内容 (props.summary / props.description / props.foods)
+        props = h.get("props", {})
+        
+        # 拼接所有可能的文本字段进行模糊匹配
+        # 例如: summary="午餐", description="吃了番茄炒蛋", foods=["Tomato Egg"]
+        content_text = (
+            str(props.get("summary", ""))
+        ).lower()
+
+        # 4. 计算惩罚
+        # 如果候选菜名出现在了最近的日志里
+        for cand in candidates_lower:
+            if cand in content_text:
+                # 距离今天越近，惩罚越大 (1/(days+1))
+                # 昨天吃的: 1/2 = 0.5
+                # 今天吃的: 1/1 = 1.0
+                penalty += 1.0 / max(days + 1, 1)
 
     return penalty
 
@@ -239,10 +276,9 @@ def recommend_meals(user, kg: "DietKGQuery", top_k=3):
             # 历史惩罚
             score -= history_penalty(
                 [r["recipe_name"] for r in combo],
-                user["history"]
+                user.get("history", []) 
             ) * 0.15
 
-            
             plan_recipes = []
             plan_nutrients = defaultdict(float)
 

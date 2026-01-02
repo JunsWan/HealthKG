@@ -316,7 +316,7 @@ KNOWLEDGE_RETRIEVER_RESPONSE_FORMAT = {
                 "properties": {
                   # 针对 exercise 必须产生这三个参数
                   "target_body_part": {"type": "string", "description": "Target muscle or body part (e.g., Chest, Back, Legs)"},
-                  "injury_body_part": {"type": "string", "description": "Body part to avoid due to injury"},
+                  "injury_body_part": {"type": "array", "description": "Body part to avoid due to injury"},
                   "available_equipment": {"type": "array", "items": {"type": "string"}},
                   # 兼容 nutrition 依然用 query
                   "query": {"type": "string"} 
@@ -618,3 +618,70 @@ DIET_LOGGER_RESPONSE_FORMAT = {
     }
   }
 }
+
+LOG_INTENT_ANALYZER_RESPONSE_FORMAT = {
+  "type": "json_schema",
+  "json_schema": {
+    "name": "log_intent_analyzer",
+    "strict": True,
+    "schema": {
+      "type": "object",
+      "additionalProperties": False,
+      "properties": {
+        "events": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": False,
+            "properties": {
+              "event_type": {
+                "type": "string",
+                "enum": ["workout", "diet"]
+              },
+              "action": {
+                "type": "string"
+              },
+              "exercise_text": {
+                "type": ["string", "null"]
+              },
+              "body_part_hint": {
+                "type": ["string", "null"]
+              },
+              "plan_related": {
+                "type": ["boolean", "null"]
+              },
+              "food_texts": {
+                "type": ["array", "null"],
+                "items": {
+                  "type": "string"
+                }
+              },
+              "meal_type": {
+                "type": ["string", "null"]
+              },
+              "quantity_known": {
+                "type": ["boolean", "null"]
+              }
+            },
+            "required": [
+              "event_type",
+              "action",
+              "exercise_text",
+              "body_part_hint",
+              "plan_related",
+              "food_texts",
+              "meal_type",
+              "quantity_known"
+            ]
+          }
+        },
+        "confidence": {
+          "type": "number"
+        }
+      },
+      "required": ["events", "confidence"]
+    }
+  }
+}
+
+

@@ -10,7 +10,7 @@ from memory.graph_store import new_graph, summarize
 
 # === Config ===
 DATA_DIR = os.getenv("DATA_DIR", "./data")
-PATH_USER = os.path.join(DATA_DIR, "user_memory_graph.json")
+PATH_USER = os.path.join(DATA_DIR, "user_memory_graph_base.json")
 
 # ★★★ 定义东八区时区 ★★★
 TZ_CN = timezone(timedelta(hours=8))
@@ -166,43 +166,75 @@ with tab_diet_plan:
     active_diet = mem_sum.get("active_diet_plan", {})
     
     if active_diet and active_diet.get("is_active"):
-        st.subheader(f"🥗 {active_diet.get('title', '饮食指南')}")
-        st.caption(f"制定日期: {active_diet.get('start_date')}")
-        
-        st.markdown("### 💡 核心策略")
+        st.subheader("🥗 当前饮食方案")
+        # 显示制定时间和摘要
+        if active_diet.get("ts"):
+            dt = datetime.fromtimestamp(active_diet["ts"], TZ_CN).strftime("%Y-%m-%d")
+            st.caption(f"📅 制定于: {dt}")
+            
+        if active_diet.get("summary"):
+            st.info(active_diet["summary"])
+            
         details = active_diet.get("details", {})
-        macro = {}
-        if isinstance(details, dict):
-            macro = details.get("macro_target") or details.get("diet_plan", {}).get("macro_target", {})
         
+        # === 1. 核心营养素指标 (Macro Targets) ===
+        macro = details.get("macro_target", {})
         if macro:
+            st.markdown("##### 📊 每日目标")
             c1, c2, c3, c4 = st.columns(4)
-            c1.metric("🔥 每日热量", f"{macro.get('kcal', '-')}", "kcal")
+            c1.metric("🔥 热量", f"{macro.get('kcal', '-')}", "kcal")
             c2.metric("🥩 蛋白质", f"{macro.get('protein_g', '-')}", "g")
             c3.metric("🍚 碳水", f"{macro.get('carb_g', '-')}", "g")
             c4.metric("🥑 脂肪", f"{macro.get('fat_g', '-')}", "g")
         
-        st.info(active_diet.get("summary", "暂无文字摘要"))
+        st.divider()
 
-        st.markdown("### 🍽️ 参考餐单")
-        if isinstance(details, list): 
+        # === 2. 详细餐单 (Meal Templates) ===
+        st.markdown("##### 🍽️ 执行餐单")
+        
+        meal_templates = details.get("meal_templates", [])
+        
+        # 新版结构 (JSON Templates)
+        if meal_templates:
+            for meal in meal_templates:
+                with st.container():
+                    # 标题行
+                    st.markdown(f"#### {meal.get('name', '餐点')}")
+                    
+                    # 食物列表
+                    for item in meal.get("items", []):
+                        st.markdown(f"- {item}")
+                    
+                    # 备注
+                    notes = meal.get("notes", [])
+                    if notes:
+                        # 转换列表为字符串，并用不同颜色标识
+                        note_str = "；".join(notes)
+                        st.caption(f"💡 **Tips**: {note_str}")
+                    
+                    st.markdown("---")
+                    
+        # 兼容旧版/Recommender结构 (List of plans)
+        elif isinstance(details, list):
             for meal in details:
                 with st.expander(f"{meal.get('meal_time','').title()} (约{meal.get('actual_calories',0):.0f} kcal)"):
                     for r in meal.get("recipes", []):
                         st.write(f"- **{r.get('recipe_name')}**")
                         st.caption(", ".join([i['text'] for i in r.get('ingredients', [])[:4]]))
-        elif isinstance(details, dict):
-            meals = details.get("meal_templates") or details.get("diet_plan", {}).get("meal_templates", [])
-            if meals:
-                for m in meals:
-                    with st.expander(f"{m.get('name', '餐')}"):
-                        st.write(", ".join(m.get("items", [])))
-                        if m.get("notes"):
-                            st.caption("; ".join(m.get("notes")))
-            else:
-                st.json(details)
+        
+        else:
+            st.warning("暂无结构化餐单数据")
+
+        # === 3. 全局建议 (Global Notes) ===
+        global_notes = details.get("notes", [])
+        if global_notes:
+            with st.expander("📝 综合执行建议", expanded=True):
+                for n in global_notes:
+                    st.markdown(f"- {n}")
+
     else:
-        st.info("暂无饮食计划。")
+        st.info("暂无执行中的饮食计划。")
+        st.caption("你可以对我说：“帮我制定一个减脂饮食计划” 来生成。")
 
 # -----------------------------------------------------------------------------
 # Tab 4: Diet Logs (Updated with Timezone & Stats)

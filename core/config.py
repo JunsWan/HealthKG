@@ -3,7 +3,7 @@ import os
 import streamlit as st
 
 DEFAULT_BASE_URL = "https://api.ai-gaochao.cn/v1"
-DEFAULT_MODEL = "gpt-4.1"
+DEFAULT_MODEL = "gpt-5"
 
 def get_cfg() -> dict:
     if "cfg" not in st.session_state:
@@ -14,7 +14,7 @@ def get_cfg() -> dict:
 
         # === 1. 运动图谱配置 (Exercise KG) ===
         # 你的 7222f7ba 库
-        ex_uri = os.environ.get("NEO4J_URI", "neo4j+s://7222f7ba.databases.neo4j.io")
+        ex_uri = os.environ.get("NEO4J_URI", "neo4j+ssc://7222f7ba.databases.neo4j.io")
         ex_user = os.environ.get("NEO4J_USER", "neo4j")
         ex_pass = os.environ.get("NEO4J_PASSWORD", "flF6YWcBHUAR3GFOvDHyo4-ZbpU-NrLhqccto15uoBU")
 
