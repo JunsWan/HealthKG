@@ -7,9 +7,9 @@ URI = "neo4j+s://7222f7ba.databases.neo4j.io"
 AUTH = ("neo4j", "flF6YWcBHUAR3GFOvDHyo4-ZbpU-NrLhqccto15uoBU")
 
 user_profile = {
-    "target_body_part": "Waist",
-    "injury_body_part": "Neck",
-    "available_equipment": ['Barbell','Lever'],
+    "target_body_part": "Chest",
+    "injury_body_part": ["Waist"],
+    "available_equipment": ["Barbell", "Dumbbell", "Cable", "Smith", "Lever"],
     "history": [
   {
     "id": "Retraction__Neck__Stretch__",

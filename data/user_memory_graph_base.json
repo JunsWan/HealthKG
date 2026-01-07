@@ -1,0 +1,253 @@
+{
+  "nodes": [
+    {
+      "id": "profile:basic",
+      "type": "Profile",
+      "props": {
+        "name": "User",
+        "gender": "male",
+        "age": 29,
+        "height": 175,
+        "weight": 82,
+        "nationality": "chinese",
+        "activity_level": "moderate"
+      },
+      "last_updated": 1734500000
+    },
+    {
+      "id": "constraint:equipment",
+      "type": "Constraint",
+      "props": {
+        "items": [
+          "Barbell",
+          "Dumbbell",
+          "Cable",
+          "Smith",
+          "Lever"
+        ]
+      },
+      "last_updated": 1734500000
+    },
+    {
+      "id": "constraint:time",
+      "type": "Constraint",
+      "props": {
+        "time_min": 60,
+        "days_per_week": 4
+      },
+      "last_updated": 1734500000
+    },
+    {
+      "id": "injury:waist",
+      "type": "Injury",
+      "props": {
+        "name": "Waist",
+        "status": "active"
+      },
+      "last_updated": 1734300000
+    },
+    {
+      "id": "injury:Neck",
+      "type": "Injury",
+      "props": {
+        "name": "Neck",
+        "status": "active"
+      },
+      "last_updated": 1734300000
+    },
+    {
+      "id": "preference:diet",
+      "type": "Preference",
+      "props": {
+        "diet_labels": [],
+        "health_preferences": [],
+        "forbidden_cautions": [],
+        "preferred_ingredients": [],
+        "disliked_ingredients": []
+      },
+      "last_updated": 1766324261
+    },
+    {
+      "id": "goal:primary",
+      "type": "Goal",
+      "props": {
+        "goal_type": "cutting"
+      },
+      "last_updated": 1766324568
+    }
+  ],
+  "edges": [],
+  "events": [
+    {
+      "type": "Plan",
+      "ts": 1734501000,
+      "props": {
+        "plan_type": "workout",
+        "summary": "四天分化训练计划（上/下肢）",
+        "status": "active",
+        "details": {
+          "schedule": "Mon / Tue / Thu / Sat",
+          "sessions": [
+            {
+              "name": "Upper Body",
+              "duration_min": 70
+            },
+            {
+              "name": "Lower Body",
+              "duration_min": 65
+            }
+          ]
+        }
+      }
+    },
+    {
+      "type": "WorkoutLog",
+      "ts": 1734585600,
+      "props": {
+        "summary": "上肢训练",
+        "exercise_id": "Barbell Bench Press",
+        "body_part": "Chest",
+        "target_muscles": [
+          "Pectoralis Major",
+          "Triceps"
+        ],
+        "plan_id": "current_active",
+        "automatic_log": true
+      }
+    },
+    {
+      "type": "WorkoutLog",
+      "ts": 1734672000,
+      "props": {
+        "summary": "颈部训练",
+        "exercise_id": "Neck Flexion__Neck__Weighted__Sternocleidomastoid",
+        "body_part": "Neck",
+        "target_muscles": [
+          "Sternocleidomastoid"
+        ],
+        "automatic_log": false
+      }
+    },
+    {
+      "type": "DietLog",
+      "ts": 1734592800,
+      "props": {
+        "summary": "Chicken & Broccoli",
+        "meal_type": "lunch",
+        "calories": 520,
+        "protein": 45,
+        "carb": 30,
+        "fat": 12,
+        "automatic_log": true
+      }
+    },
+    {
+      "type": "DietLog",
+      "ts": 1734675600,
+      "props": {
+        "summary": "Fried Chicken Banh Mi",
+        "meal_type": "dinner",
+        "calories": 650,
+        "protein": 32,
+        "carb": 58,
+        "fat": 24,
+        "automatic_log": false
+      }
+    },
+    {
+      "type": "WorkoutLog",
+      "props": {
+        "summary": "完成 Reclined Shoulder Press",
+        "exercise_id": "Reclined Shoulder Press__Should__Lever (plate loaded)__Deltoid, Anterior",
+        "body_part": "Should",
+        "target_muscles": [
+          "Deltoid, Anterior"
+        ],
+        "plan_id": "current_active",
+        "automatic_log": true
+      },
+      "ts": 1766321698
+    },
+    {
+      "type": "WorkoutLog",
+      "props": {
+        "summary": "完成 Lateral Raise",
+        "exercise_id": "Lateral Raise__Should__Cable__Deltoid, Lateral",
+        "body_part": "Should",
+        "target_muscles": [
+          "Deltoid, Lateral"
+        ],
+        "plan_id": "current_active",
+        "automatic_log": true
+      },
+      "ts": 1766321698
+    },
+    {
+      "type": "Plan",
+      "props": {
+        "plan_type": "diet",
+        "summary": "2000kcal减脂饮食计划，无忌口，三餐+加餐结构，蛋白质约150g，碳水180g，脂肪55g。",
+        "status": "active",
+        "details": {
+          "meal_templates": [
+            {
+              "name": "早餐",
+              "items": [
+                "燕麦片（50g）+脱脂牛奶（250ml）",
+                "煮鸡蛋（2个）",
+                "香蕉（1根）"
+              ],
+              "notes": [
+                "高蛋白、高纤维，帮助饱腹且利于减脂。蛋白质约30g。"
+              ]
+            },
+            {
+              "name": "午餐",
+              "items": [
+                "鸡胸肉（150g）+西兰花（100g）+糙米（100g）",
+                "橄榄油（10g）炒蔬菜"
+              ],
+              "notes": [
+                "蛋白质充足，碳水适量，脂肪健康。蛋白质约45g。"
+              ]
+            },
+            {
+              "name": "加餐",
+              "items": [
+                "低脂奶酪（50g）",
+                "苹果（1个）"
+              ],
+              "notes": [
+                "补充蛋白质和维生素，控制热量。蛋白质约15g。"
+              ]
+            },
+            {
+              "name": "晚餐",
+              "items": [
+                "烤鸡胸肉三明治（全麦面包60g+鸡胸肉100g+生菜30g，约450kcal）",
+                "生菜沙拉（50g）"
+              ],
+              "notes": [
+                "高蛋白低脂，易控热量。蛋白质约60g。"
+              ]
+            }
+          ],
+          "macro_target": {
+            "kcal": 2000,
+            "protein_g": 150,
+            "carb_g": 180,
+            "fat_g": 55
+          },
+          "notes": [
+            "总热量控制在2000kcal左右，蛋白质充足（约150g），碳水180g，脂肪55g。",
+            "三餐+加餐结构，蛋白质分配均匀，利于减脂和肌肉保留。",
+            "无忌口，食材可灵活替换，优先选择高蛋白、低脂肪、复合碳水食物。",
+            "如需调整口味或食材，可参考fallbacks。",
+            "建议每日饮水量不少于2000ml。"
+          ]
+        }
+      },
+      "ts": 1766324261
+    }
+  ]
+}

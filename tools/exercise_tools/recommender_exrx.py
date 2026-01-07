@@ -1,8 +1,9 @@
 # recommender.py
 
 from datetime import datetime, timedelta
-from collections import Counter
-from query import ExerciseKGQuery
+from collections import Counter, defaultdict
+import random
+from tools.exercise_tools.query import ExerciseKGQuery
 
 
 # =========================
@@ -215,13 +216,31 @@ def recommend_exercises(
     scores = score_exercises(feasible, history)
 
     # =========================
-    # Step 4️⃣ 排序 & Top-K
+    # Step 4️⃣ 排序 & Top-K（同分随机，return 不变）
     # =========================
-    ranked = sorted(
-        feasible,
-        key=lambda ev: scores.get(ev["id"], 0.0),
-        reverse=True
-    )
 
+    # 按 score 分组
+    score_buckets = defaultdict(list)
+    for ev in feasible:
+        score = scores.get(ev["id"], 0.0)
+        score_buckets[score].append(ev)
+
+    # 对每个 score 内部随机打散
+    for evs in score_buckets.values():
+        random.shuffle(evs)
+
+    # 按 score 降序拼接
+    ranked = []
+    for score in sorted(score_buckets.keys(), reverse=True):
+        ranked.extend(score_buckets[score])
+
+    # 🔽 新增：过滤 instructions 为 None / 空 的动作
+    ranked = [
+        ev for ev in ranked
+        if ev.get("instructions")  # None、"" 都会被过滤
+    ]
+
+    # ⚠️ return 方式与原来完全一致
     return ranked[:top_k]
+
 

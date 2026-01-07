@@ -5,6 +5,8 @@ from typing import Dict, Any, Optional
 class DietKGQuery:
 
     def __init__(self, uri, auth):
+        masked_uri = uri
+        print(f"[DietKGQuery] Connecting to: {masked_uri} ...")
         self.driver = GraphDatabase.driver(uri, auth=auth)
 
     def close(self):

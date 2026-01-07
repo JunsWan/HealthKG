@@ -311,7 +311,18 @@ KNOWLEDGE_RETRIEVER_RESPONSE_FORMAT = {
             "type": "object",
             "properties": {
               "tool": {"type": "string", "enum": ["retrieve_exercise_kg", "retrieve_nutrition_kg"]},
-              "args": {"type": "object"} # Dynamic
+              "args": {
+                "type": "object",
+                "properties": {
+                  # 针对 exercise 必须产生这三个参数
+                  "target_body_part": {"type": "string", "description": "Target muscle or body part (e.g., Chest, Back, Legs)"},
+                  "injury_body_part": {"type": "array", "description": "Body part to avoid due to injury"},
+                  "available_equipment": {"type": "array", "items": {"type": "string"}},
+                  # 兼容 nutrition 依然用 query
+                  "query": {"type": "string"} 
+                },
+                # 这里不要 strict required，因为不同工具需要的参数不一样，靠 Agent 自己判断
+              }
             },
             "required": ["tool", "args"]
           }
@@ -558,3 +569,119 @@ MEMORY_UPDATER_RESPONSE_FORMAT = {
     }
   }
 }
+
+DIET_LOGGER_RESPONSE_FORMAT = {
+  "type": "json_schema",
+  "json_schema": {
+    "name": "diet_logger",
+    "strict": True,
+    "schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": ["log", "clarify"],
+          "description": "If key info (quantity) is missing, choose 'clarify'. If sufficient or estimatable, choose 'log'."
+        },
+        "clarification_question": {
+          "type": "string", 
+          "description": "Question to ask user for missing details (e.g. 'How many grams of beef?')"
+        },
+        "log_data": {
+          "type": "object",
+          "properties": {
+            "summary": {"type": "string", "description": "Short summary for UI list (e.g. 'Beef Hotpot (Beef, Shrimp)')"},
+            "foods": {"type": "array", "items": {"type": "string"}},
+            "total_calories": {"type": "number"},
+            "macros": {
+              "type": "object",
+              "properties": {
+                "protein": {"type": "number"},
+                "carb": {"type": "number"},
+                "fat": {"type": "number"}
+              },
+              "required": ["protein", "carb", "fat"],
+              "additionalProperties": False
+            },
+            "meal_type": {"type": "string", "enum": ["breakfast", "lunch", "dinner", "snack"]}
+          },
+          "required": ["summary", "foods", "total_calories", "macros", "meal_type"],
+          "additionalProperties": False
+        },
+        "feedback_response": {
+          "type": "string",
+          "description": "Response to user. If log: confirm what was recorded & totals. If clarify: ask the question."
+        }
+      },
+      "required": ["status", "clarification_question", "log_data", "feedback_response"],
+      "additionalProperties": False
+    }
+  }
+}
+
+LOG_INTENT_ANALYZER_RESPONSE_FORMAT = {
+  "type": "json_schema",
+  "json_schema": {
+    "name": "log_intent_analyzer",
+    "strict": True,
+    "schema": {
+      "type": "object",
+      "additionalProperties": False,
+      "properties": {
+        "events": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": False,
+            "properties": {
+              "event_type": {
+                "type": "string",
+                "enum": ["workout", "diet"]
+              },
+              "action": {
+                "type": "string"
+              },
+              "exercise_text": {
+                "type": ["string", "null"]
+              },
+              "body_part_hint": {
+                "type": ["string", "null"]
+              },
+              "plan_related": {
+                "type": ["boolean", "null"]
+              },
+              "food_texts": {
+                "type": ["array", "null"],
+                "items": {
+                  "type": "string"
+                }
+              },
+              "meal_type": {
+                "type": ["string", "null"]
+              },
+              "quantity_known": {
+                "type": ["boolean", "null"]
+              }
+            },
+            "required": [
+              "event_type",
+              "action",
+              "exercise_text",
+              "body_part_hint",
+              "plan_related",
+              "food_texts",
+              "meal_type",
+              "quantity_known"
+            ]
+          }
+        },
+        "confidence": {
+          "type": "number"
+        }
+      },
+      "required": ["events", "confidence"]
+    }
+  }
+}
+
+

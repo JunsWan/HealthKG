@@ -1,8 +1,8 @@
 import pandas as pd
 import ast
 # 参数
-input_csv = "/Users/daishangzhe/研究生课程/认知智能前沿技术与实践/DATA/recipes.csv"
-output_csv = "/Users/daishangzhe/研究生课程/认知智能前沿技术与实践/DATA/chinese_recipes.csv"
+input_csv = "../DATA/recipes.csv"
+output_csv = "../DATA/chinese_recipes.csv"
 column_name = "cuisine_type"      # 需要检查的列名
 
 target_cuisines = [
