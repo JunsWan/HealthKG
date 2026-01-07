@@ -21,7 +21,7 @@ user = {
     "health_preferences": ["Gluten-Free", "Dairy-Free"],
     "forbidden_cautions": ["Shellfish"],
     "preferred_ingredients": ["chicken", "broccoli", "tofu"],
-    "disliked_ingredients": ["cilantro"]
+    "disliked_ingredients": ["cilantro", "shrimp"]
   },
   "current_context": {
     "meal_time": "dinner",

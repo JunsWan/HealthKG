@@ -62,17 +62,29 @@ def remaining_calories_today(user, tdee):
     return max(tdee - eaten, 0)
 
 
-def ingredient_score(recipe, user):
+def ingredient_preference_score(recipe, user):
+    liked = {
+        i.lower()
+        for i in user["diet_profile"].get("preferred_ingredients", [])
+    }
+    disliked = {
+        i.lower()
+        for i in user["diet_profile"].get("disliked_ingredients", [])
+    }
+
+    ingredients = set()
+
+    for ing in recipe.get("ingredients", []):
+        if isinstance(ing, dict):
+            name = ing.get("name")
+            if name:
+                ingredients.add(name.lower())
+        elif isinstance(ing, str):
+            ingredients.add(ing.lower())
+
     score = 0.0
-    ingredients_text = str(recipe.get("ingredients", "")).lower()
-
-    for ing in user["diet_profile"].get("preferred_ingredients", []):
-        if ing.lower() in ingredients_text:
-            score += 0.05
-
-    for ing in user["diet_profile"].get("disliked_ingredients", []):
-        if ing.lower() in ingredients_text:
-            score -= 0.10
+    score += len(ingredients & liked) * 1.0
+    score -= len(ingredients & disliked) * 1.5
 
     return score
 
@@ -133,6 +145,31 @@ def normalize_nutrients(nutrients):
     return result
 
 
+def nutrient_match_score(plan_nutrients, user):
+    """
+    user["diet_profile"]["nutrient_targets"] 例子：
+    {
+        "protein_g": [90, 130],
+        "fat_g": [40, 70],
+        "carbs_g": [150, 250]
+    }
+    """
+    targets = user["diet_profile"].get("nutrient_targets", {})
+    score = 0.0
+
+    for k, (low, high) in targets.items():
+        v = plan_nutrients.get(k, 0)
+
+        if low <= v <= high:
+            score += 1.0
+        else:
+            # 超出越多，惩罚越大（线性）
+            dist = min(abs(v - low), abs(v - high))
+            score -= dist / max(high, 1)
+
+    return score
+
+
 def normalize_ingredients(ingredients):
     """
     ingredient 规范化：
@@ -163,26 +200,53 @@ def normalize_ingredients(ingredients):
     return normalized
 
 
+def jaccard_similarity(a: set, b: set) -> float:
+    if not a and not b:
+        return 0.0
+    return len(a & b) / len(a | b)
+
+
+def diversity_penalty(
+    combo_recipes: list[str],
+    selected_solutions: list[list[str]],
+    alpha: float = 1.0
+) -> float:
+    """
+    对当前方案与已选方案的最大相似度进行惩罚
+    """
+    if not selected_solutions:
+        return 0.0
+
+    combo_set = set(combo_recipes)
+
+    max_sim = 0.0
+    for sol in selected_solutions:
+        sim = jaccard_similarity(combo_set, set(sol))
+        max_sim = max(max_sim, sim)
+
+    return alpha * max_sim
+
 
 def recommend_meals(user, kg: "DietKGQuery", top_k=3):
     start_time = time.time()
     tdee = compute_tdee(user)
     meal = user["current_context"]["meal_time"]
 
+    # ---------- 目标热量 ----------
     if user["current_context"]["today_intake"]:
         remaining = remaining_calories_today(user, tdee)
         if meal == "breakfast":
             target_cal = remaining * 0.25
-        elif meal == "lunch" or meal == "brunch": 
+        elif meal == "lunch" or meal == "brunch":
             target_cal = remaining * 0.55
         elif meal == "dinner":
-            target_cal = remaining 
+            target_cal = remaining
         else:
             target_cal = remaining * MEAL_RATIOS.get(meal, 0.1)
     else:
         target_cal = tdee * MEAL_RATIOS.get(meal, 0.3)
 
-
+    # ---------- dish 约束 ----------
     dish_constraint = {
         "breakfast": ["bread", "egg", "cereals"],
         "lunch": ["main course", "salad", "soup"],
@@ -191,6 +255,7 @@ def recommend_meals(user, kg: "DietKGQuery", top_k=3):
         "brunch": ["main course", "salad"]
     }
 
+    # ---------- KG 查询 ----------
     candidates = kg.fetch_candidates_with_detail(
         meal_type=meal if meal != "lunch" else "lunch/dinner",
         dish_types=dish_constraint[meal],
@@ -198,10 +263,13 @@ def recommend_meals(user, kg: "DietKGQuery", top_k=3):
         health_labels=user["diet_profile"]["health_preferences"],
         forbidden_cautions=user["diet_profile"]["forbidden_cautions"]
     )
+
     print("符合条件的候选数量有：", len(candidates))
-    candidates_time = time.time()
-    print("搜索到候选的时间为：", candidates_time-start_time)
-    meals = []
+    print("搜索到候选的时间为：", time.time() - start_time)
+
+    # ---------- 1️⃣ 枚举所有组合，计算 base_score ----------
+    scored_plans = []
+
     for k in (1, 2, 3):
         for combo in combinations(candidates, k):
             total_cal = sum(
@@ -209,14 +277,25 @@ def recommend_meals(user, kg: "DietKGQuery", top_k=3):
                 for r in combo
             )
 
+            plan_nutrients = defaultdict(float)
+            ingredient_score = 0.0
+
+            for r in combo:
+                factor = 1.0 / max(r["servings"], 1)
+                nutrients = normalize_nutrients(r["nutrients"])
+                for nk, nv in nutrients.items():
+                    plan_nutrients[nk] += nv * factor
+
+                ingredient_score += ingredient_preference_score(r, user)
+
             score = 0.0
 
             # 热量匹配
             score += max(
                 0, 1 - abs(total_cal - target_cal) / max(target_cal, 1)
-            ) * 0.8
+            ) * 0.4
 
-            # 蛋白偏好（增肌）
+            # 增肌蛋白偏好
             if user["activity"].get("user_goal") == "bulking":
                 score += sum(
                     "High-Protein" in r.get("diet_labels", [])
@@ -229,12 +308,19 @@ def recommend_meals(user, kg: "DietKGQuery", top_k=3):
                 for r in combo
             ) * 0.2
 
-            # 中国菜偏好
+            # 菜系偏好
             nationality = user["demographics"].get("nationality", "chinese")
             score += sum(
-                1 for r in combo
-                if nationality in r["cuisine_type"]
+                1 for r in combo if nationality in r["cuisine_type"]
             ) * 0.1
+
+            # 食材偏好
+            score += ingredient_score
+            
+            # 营养适配
+            score += nutrient_match_score(
+                plan_nutrients, user
+            ) 
 
             # 历史惩罚
             score -= history_penalty(
@@ -242,13 +328,13 @@ def recommend_meals(user, kg: "DietKGQuery", top_k=3):
                 user["history"]
             ) * 0.15
 
-            
             plan_recipes = []
             plan_nutrients = defaultdict(float)
 
             for r in combo:
                 per_serving_factor = 1.0 / max(r["servings"], 1)
                 nutrients = normalize_nutrients(r["nutrients"])
+
                 for k2, v2 in nutrients.items():
                     plan_nutrients[k2] += v2 * per_serving_factor
 
@@ -258,19 +344,58 @@ def recommend_meals(user, kg: "DietKGQuery", top_k=3):
                     "calories": round(r["calories"] * per_serving_factor, 1),
                     "cuisine_type": r["cuisine_type"],
                     "dish_type": r["dish_type"],
-                    "ingredients": normalize_ingredients(r["ingredients"]),
-                    "nutrients": nutrients
                 })
 
-            meals.append({
+            scored_plans.append({
                 "meal_time": meal,
                 "target_calories": round(target_cal, 1),
                 "actual_calories": round(total_cal, 1),
-                "score": round(score, 3),
+                "base_score": round(score, 4),
                 "recipes": plan_recipes,
             })
 
-    meals.sort(key=lambda x: x["score"], reverse=True)
-    end_time = time.time()
-    print("全部评分完的时间为：", end_time-start_time)
-    return meals[:top_k]
+    # ---------- 2️⃣ 按 base_score 排序 ----------
+    scored_plans.sort(key=lambda x: x["base_score"], reverse=True)
+
+    # ---------- 3️⃣ 多样性约束：逐个选 Top-K ----------
+    selected = []
+    selected_recipe_sets = []
+
+    ALPHA = 0.4   # ⭐ 多样性惩罚强度（推荐 0.3–0.6）
+
+    while len(selected) < top_k and scored_plans:
+        best_plan = None
+        best_final_score = -1e9
+
+        for plan in scored_plans:
+            recipe_names = [r["recipe_name"] for r in plan["recipes"]]
+
+            penalty = diversity_penalty(
+                recipe_names,
+                selected_recipe_sets,
+                alpha=ALPHA
+            )
+
+            final_score = plan["base_score"] - penalty
+
+            if final_score > best_final_score:
+                best_final_score = final_score
+                best_plan = plan
+
+        if best_plan is None:
+            break
+
+        # 记录最终 score
+        best_plan["score"] = round(best_final_score, 4)
+        selected.append(best_plan)
+        selected_recipe_sets.append(
+            [r["recipe_name"] for r in best_plan["recipes"]]
+        )
+
+        # 移除已选方案，避免重复
+        scored_plans = [
+            p for p in scored_plans if p is not best_plan
+        ]
+
+    print("全部评分 + 多样性筛选完成，用时：", time.time() - start_time)
+    return selected
