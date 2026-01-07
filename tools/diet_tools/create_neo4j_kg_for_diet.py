@@ -77,104 +77,117 @@ def load_recipes_to_neo4j(df, batch_size=BATCH_SIZE):
             """, batch=r_batch)
 
     # 2️⃣ Ingredient 节点 + HAS_INGREDIENT
-    ingredient_map = {}  # 去重
-    rel_ing = []
-    for _, row in df.iterrows():
-        recipe_label = row['label']
-        for ing in row['ingredients']:
-            name = ing.get("food")
-            if name not in ingredient_map:
-                ingredient_map[name] = {
-                    "name": name,
-                    "text": ing.get("text"),
-                    "weight": ing.get("weight"),
-                    "measure": ing.get("measure"),
-                    "quantity": ing.get("quantity")
-                }
-            rel_ing.append({"recipe_label": recipe_label, "ingredient_name": name})
+    ingredient_nodes = {}
+    ingredient_rels = []
 
-    ingredients_data = list(ingredient_map.values())
+    for _, row in df.iterrows():
+        for ing in row["ingredients"]:
+            name = ing.get("food")
+            if not name:
+                continue
+
+            ingredient_nodes[name] = {"name": name}
+
+            ingredient_rels.append({
+                "recipe_label": row["label"],
+                "ingredient_name": name,
+                "quantity": ing.get("quantity"),
+                "measure": ing.get("measure"),
+                "weight": ing.get("weight"),
+                "text": ing.get("text")
+            })
+
     with driver.session() as session:
-        for i_batch in tqdm(list(batch(ingredients_data, batch_size)), desc="Importing Ingredients"):
+        for b in tqdm(list(batch(list(ingredient_nodes.values()), batch_size)), desc="Importing Ingredients"):
             session.run("""
                 UNWIND $batch AS i
-                MERGE (ing:Ingredient {name: i.name})
-                SET ing += i
-            """, batch=i_batch)
+                MERGE (:Ingredient {name: i.name})
+            """, batch=b)
 
-        for r_batch in tqdm(list(batch(rel_ing, batch_size)), desc="Creating HAS_INGREDIENT Relations"):
+        for b in tqdm(list(batch(ingredient_rels, batch_size)), desc="Creating USES relations"):
             session.run("""
-                UNWIND $batch AS rel
-                MATCH (r:Recipe {label: rel.recipe_label})
-                MATCH (i:Ingredient {name: rel.ingredient_name})
-                MERGE (r)-[:HAS_INGREDIENT]->(i)
-            """, batch=r_batch)
+                UNWIND $batch AS r
+                MATCH (rec:Recipe {label: r.recipe_label})
+                MATCH (ing:Ingredient {name: r.ingredient_name})
+                MERGE (rec)-[rel:USES]->(ing)
+                SET rel.quantity = r.quantity,
+                    rel.measure = r.measure,
+                    rel.weight = r.weight,
+                    rel.text = r.text
+            """, batch=b)
+
 
     # 3️⃣ Nutrient 节点 + HAS_NUTRIENT
-    nutrient_map = {}
-    rel_nut = []
-    for _, row in df.iterrows():
-        recipe_label = row['label']
-        for nut_name, nut_val in row['total_nutrients'].items():
-            if nut_name not in nutrient_map:
-                nutrient_map[nut_name] = {
-                    "name": nut_name,
-                    "unit": nut_val.get("unit"),
-                    "label": nut_val.get("label"),
-                    "quantity": nut_val.get("quantity")
-                }
-            rel_nut.append({"recipe_label": recipe_label, "nutrient_name": nut_name})
+    nutrient_nodes = {}
+    nutrient_rels = []
 
-    nutrients_data = list(nutrient_map.values())
+    for _, row in df.iterrows():
+        for name, val in row["total_nutrients"].items():
+            nutrient_nodes[name] = {
+                "name": name,
+                "unit": val.get("unit"),
+                "label": val.get("label")
+            }
+            nutrient_rels.append({
+                "recipe_label": row["label"],
+                "nutrient_name": name,
+                "quantity": val.get("quantity")
+            })
+
     with driver.session() as session:
-        for n_batch in tqdm(list(batch(nutrients_data, batch_size)), desc="Importing Nutrients"):
+        for b in tqdm(list(batch(list(nutrient_nodes.values()), batch_size)), desc="Importing Nutrients"):
             session.run("""
                 UNWIND $batch AS n
                 MERGE (nut:Nutrient {name: n.name})
-                SET nut += n
-            """, batch=n_batch)
+                SET nut.unit = n.unit,
+                    nut.label = n.label
+            """, batch=b)
 
-        for r_batch in tqdm(list(batch(rel_nut, batch_size)), desc="Creating HAS_NUTRIENT Relations"):
+        for b in tqdm(list(batch(nutrient_rels, batch_size)), desc="Creating HAS_NUTRIENT relations"):
             session.run("""
-                UNWIND $batch AS rel
-                MATCH (r:Recipe {label: rel.recipe_label})
-                MATCH (n:Nutrient {name: rel.nutrient_name})
-                MERGE (r)-[:HAS_NUTRIENT]->(n)
-            """, batch=r_batch)
+                UNWIND $batch AS r
+                MATCH (rec:Recipe {label: r.recipe_label})
+                MATCH (nut:Nutrient {name: r.nutrient_name})
+                MERGE (rec)-[rel:HAS_NUTRIENT]->(nut)
+                SET rel.quantity = r.quantity
+            """, batch=b)
 
     # 4️⃣ DailyValue 节点 + HAS_DAILY_VALUE
-    dv_map = {}
-    rel_dv = []
-    for _, row in df.iterrows():
-        recipe_label = row['label']
-        for dv_name, dv_val in row['daily_values'].items():
-            if dv_name not in dv_map:
-                dv_map[dv_name] = {
-                    "name": dv_name,
-                    "unit": dv_val.get("unit"),
-                    "label": dv_val.get("label"),
-                    "quantity": dv_val.get("quantity")
-                }
-            rel_dv.append({"recipe_label": recipe_label, "dv_name": dv_name})
+    dv_nodes = {}
+    dv_rels = []
 
-    dv_data = list(dv_map.values())
+    for _, row in df.iterrows():
+        for name, val in row["daily_values"].items():
+            dv_nodes[name] = {
+                "name": name,
+                "unit": val.get("unit"),
+                "label": val.get("label")
+            }
+            dv_rels.append({
+                "recipe_label": row["label"],
+                "dv_name": name,
+                "quantity": val.get("quantity")
+            })
+
     with driver.session() as session:
-        for d_batch in tqdm(list(batch(dv_data, batch_size)), desc="Importing DailyValues"):
+        for b in tqdm(list(batch(list(dv_nodes.values()), batch_size)), desc="Importing DailyValues"):
             session.run("""
                 UNWIND $batch AS d
                 MERGE (dv:DailyValue {name: d.name})
-                SET dv += d
-            """, batch=d_batch)
+                SET dv.unit = d.unit,
+                    dv.label = d.label
+            """, batch=b)
 
-        for r_batch in tqdm(list(batch(rel_dv, batch_size)), desc="Creating HAS_DAILY_VALUE Relations"):
+        for b in tqdm(list(batch(dv_rels, batch_size)), desc="Creating HAS_DAILY_VALUE relations"):
             session.run("""
-                UNWIND $batch AS rel
-                MATCH (r:Recipe {label: rel.recipe_label})
-                MATCH (dv:DailyValue {name: rel.dv_name})
-                MERGE (r)-[:HAS_DAILY_VALUE]->(dv)
-            """, batch=r_batch)
+                UNWIND $batch AS r
+                MATCH (rec:Recipe {label: r.recipe_label})
+                MATCH (dv:DailyValue {name: r.dv_name})
+                MERGE (rec)-[rel:HAS_DAILY_VALUE]->(dv)
+                SET rel.quantity = r.quantity
+            """, batch=b)
 
-    print("Finished loading all data to Neo4j!")
+    print("✅ Finished loading all data into Neo4j")
 
 # ============================================================
 # 执行导入
