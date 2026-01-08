@@ -13,16 +13,14 @@ def get_cfg() -> dict:
         model = os.getenv("OPENAI_MODEL", DEFAULT_MODEL)
 
         # === 1. 运动图谱配置 (Exercise KG) ===
-        # 你的 7222f7ba 库
-        ex_uri = os.environ.get("NEO4J_URI", "neo4j+ssc://7222f7ba.databases.neo4j.io")
+        ex_uri = os.environ.get("NEO4J_URI", "exercise neo4j url")
         ex_user = os.environ.get("NEO4J_USER", "neo4j")
-        ex_pass = os.environ.get("NEO4J_PASSWORD", "flF6YWcBHUAR3GFOvDHyo4-ZbpU-NrLhqccto15uoBU")
+        ex_pass = os.environ.get("NEO4J_PASSWORD", "password")
 
         # === 2. 饮食图谱配置 (Diet KG) ===
-        # 你的 88f8ccae 库 (注意这里把硬编码的搬过来，或者设环境变量)
-        diet_uri = os.environ.get("DIET_NEO4J_URI", "neo4j+ssc://88f8ccae.databases.neo4j.io")
+        diet_uri = os.environ.get("DIET_NEO4J_URI", "diet neo4j url")
         diet_user = os.environ.get("DIET_NEO4J_USER", "neo4j")
-        diet_pass = os.environ.get("DIET_NEO4J_PASSWORD", "_BAD-vDc9fZjk17xTHjAUWaNPoxGxhh1X9oz2-fDffM")
+        diet_pass = os.environ.get("DIET_NEO4J_PASSWORD", "password")
 
         st.session_state.cfg = {
             "api_key": api_key,

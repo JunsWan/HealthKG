@@ -5,8 +5,8 @@ from tools.diet_tools.query import DietKGQuery
 from tools.diet_tools.diet_evaluator import recommend_meals
 
 
-_NEO4J_URI = "neo4j+ssc://88f8ccae.databases.neo4j.io"
-_NEO4J_AUTH = ("neo4j", "_BAD-vDc9fZjk17xTHjAUWaNPoxGxhh1X9oz2-fDffM")
+_NEO4J_URI = "your neo4j url"
+_NEO4J_AUTH = ("neo4j", "password")
 
 _kg = None
 

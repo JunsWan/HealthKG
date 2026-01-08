@@ -1,8 +1,8 @@
 from neo4j import GraphDatabase
 
-# 替换成你的 Neo4j URI 和账号密码
-URI = "neo4j+ssc://88f8ccae.databases.neo4j.io"
-AUTH = ("neo4j", "_BAD-vDc9fZjk17xTHjAUWaNPoxGxhh1X9oz2-fDffM")
+
+URI = "your neo4j url"
+AUTH = ("neo4j", "password")
 
 # 如果 SSL 验证有问题，可以加 trust 参数
 driver = GraphDatabase.driver(URI, auth=AUTH)

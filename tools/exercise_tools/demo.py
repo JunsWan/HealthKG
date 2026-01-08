@@ -3,8 +3,8 @@
 from recommender_exrx import recommend_exercises
 from query import ExerciseKGQuery
 
-URI = "neo4j+s://7222f7ba.databases.neo4j.io"
-AUTH = ("neo4j", "flF6YWcBHUAR3GFOvDHyo4-ZbpU-NrLhqccto15uoBU")
+URI = "your neo4j url"
+AUTH = ("neo4j", "password")
 
 user_profile = {
     "target_body_part": "Chest",
