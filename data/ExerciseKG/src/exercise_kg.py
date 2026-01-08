@@ -6,9 +6,9 @@ from tqdm import tqdm
 # ============================================================
 # Neo4j Config
 # ============================================================
-URI = "neo4j+s://7222f7ba.databases.neo4j.io"
-AUTH = ("neo4j", "flF6YWcBHUAR3GFOvDHyo4-ZbpU-NrLhqccto15uoBU")
-INPUT_JSON = "/Users/junswan/Desktop/研究生课程/认知智能/data/exrx_with_instruction_bodyparts.json"
+URI = "your neo4j url"
+AUTH = ("neo4j", "password")
+INPUT_JSON = "../data/exrx_final.json"
 
 
 # ============================================================
