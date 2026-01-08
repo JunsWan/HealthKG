@@ -8,8 +8,8 @@ from math import ceil
 # ============================================================
 # Neo4j Config
 # ============================================================
-URI = "neo4j+ssc://88f8ccae.databases.neo4j.io"
-AUTH = ("neo4j", "_BAD-vDc9fZjk17xTHjAUWaNPoxGxhh1X9oz2-fDffM")
+URI = "your neo4j url"
+AUTH = ("neo4j", "password")
 CSV_FILE = "chinese_recipes.csv"
 BATCH_SIZE = 100  # 可以调整
 
